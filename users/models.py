@@ -12,6 +12,7 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=15, blank=True, null=True)
     profile_picture = models.ImageField(upload_to='profile_pictures', blank=True, null=True)
+    ip_addres = models.GenericIPAddressField()
 
     # Ensure the username is always lowercase and without spaces
     def save(self, *args, **kwargs):
