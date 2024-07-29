@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseForbidden
-from django.contrib.auth.decorators import login_required
 from .forms import ProductForm, TagForm
 from .models import Tag, Product
 from rest_framework import viewsets
@@ -18,11 +17,13 @@ class ProductViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(store=self.request.user.store)
 
-@login_required
 def create_product(request):
+    if not request.user.is_authenticated:
+        return redirect('/users/login/')
+    
     store_name = request.GET.get('store_name')
     if not store_name:
-        return redirect('product_list')  # Redirect if no store_name is provided
+        return redirect('product_list')
 
     store = get_object_or_404(Store, name=store_name)
     if store.owner != request.user:
@@ -43,7 +44,7 @@ def create_product(request):
             product.store = store
             product.save()
             product_form.save_m2m()
-            return redirect('product_list')  # Redirect to your desired page after saving
+            return redirect('product_list')
     else:
         product_form = ProductForm()
         tag_form = TagForm()

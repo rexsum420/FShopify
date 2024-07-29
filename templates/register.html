@@ -1,9 +1,12 @@
 {% extends "base.html" %}
 {% block title %}Free Market Register{% endblock title %}
 {% block content %}
-<form action="" method="post">
+<form action="{% url 'register' %}?next={{ next }}" method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Register</button>
+    <table>
+        {{ form.as_table }}
+    </table>
+    <input type="hidden" name="next" value="{{ next }}">
+    <button style='margin-top:10px;' type="submit">Register</button>
 </form>
 {% endblock content %}

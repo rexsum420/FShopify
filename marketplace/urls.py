@@ -21,6 +21,7 @@ from store.views import StoreViewSet
 from products.views import ProductViewSet
 from rest_framework.routers import DefaultRouter
 from rest_framework.authtoken.views import ObtainAuthToken
+from . import views
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet, basename='user')
@@ -34,4 +35,5 @@ urlpatterns = [
     path('users/', include('users.urls')),
     path('stores/', include('store.urls')),
     path('products/', include('products.urls')),
+    path('', views.index, name='home'),
 ]

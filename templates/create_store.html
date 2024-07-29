@@ -3,7 +3,9 @@
 {% block content %}
 <form action="" method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Create Store</button>
+    <table>
+        {{ form.as_table }}
+    </table>
+    <button style='margin-top:10px;' type="submit">Create Store</button>
 </form>
 {% endblock content %}

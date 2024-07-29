@@ -6,8 +6,9 @@ from rest_framework.authentication import TokenAuthentication
 from .models import Store
 from .forms import StoreForm
 from .serializers import StoreSerializer
+from django.urls import reverse
 
-@login_required
+@login_required(login_url='login')
 def create_store(request):
     if request.method == 'POST':
         form = StoreForm(request.POST)
