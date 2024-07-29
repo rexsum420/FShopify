@@ -1,3 +1,4 @@
 from django.contrib import admin
+from .models import Coupon, UserCoupon, ProductCoupon
 
-# Register your models here.
+admin.site.register([Coupon, UserCoupon, ProductCoupon])
