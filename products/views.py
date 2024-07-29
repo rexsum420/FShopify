@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from .serializers import ProductSerializer
 from store.models import Store
+from inventory.models import Inventory
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
@@ -33,6 +34,12 @@ def create_product(request):
             product.store = store
             product.save()
             product_form.save_m2m()
+
+            inventory = Inventory.objects.create(
+                product=product,
+                quantity=product_form.cleaned_data['quantity'],
+                low_stock_threshold=product_form.cleaned_data['low_stock_threshold']
+            )
 
             for tag_name in tags:
                 tag_name = tag_name.strip()
