@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'search',
     'seo',
     'shipping',
+    'social',
     'store',
     'support',
     'users',

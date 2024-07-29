@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Free Market Create Product{% endblock title %}
+{% block content %}
+  <h2>Create Product</h2>
+  <form method="post">
+    {% csrf_token %}
+    
+    <div class="form-group">
+      {{ product_form.as_p }}
+    </div>
+    
+    <h3>Add Tags</h3>
+    <div class="form-group">
+      {{ tag_form.as_p }}
+      <button type="submit" name="add_tag" class="btn btn-secondary">Add Tag</button>
+    </div>
+    
+    <button type="submit" name="create_product" class="btn btn-primary">Create Product</button>
+  </form>
+  
+  <script>
+    document.querySelector('form').addEventListener('submit', function(event) {
+        if (event.submitter && event.submitter.name === 'add_tag') {
+            event.preventDefault();
+            const formData = new FormData(this);
+            fetch("", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.text())
+            .then(html => {
+                document.querySelector('body').innerHTML = html;
+            })
+            .catch(error => console.log(error));
+        }
+    });
+  </script>
+{% endblock %}
