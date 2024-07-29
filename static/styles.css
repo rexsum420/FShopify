@@ -1,0 +1,13 @@
+table td {
+    vertical-align: top;
+}
+
+body {
+    background-color: black;
+    color: white;
+}
+
+nav {
+    background-color: gray;
+    color: #000;
+}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ store.name }}</h1>
+<p>{{ store.description }}</p>
+<p>Phone: {{ store.phone }}</p>
+
+{% if products %}
+    <h2>Products</h2>
+    <ul>
+        {% for product in products %}
+            <li>{{ product.name }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No products available for this store.</p>
+{% endif %}
+{% endblock content %}

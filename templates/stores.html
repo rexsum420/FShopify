@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>My Stores</h1>
+{% if stores %}
+<ul>
+    {% for store in stores %}
+    <li>
+        <a href="{% url 'view_store' store.name %}">{{ store.name }}</a>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No stores created yet</p>
+{% endif %}
+{% endblock content %}
