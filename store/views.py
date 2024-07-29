@@ -19,7 +19,7 @@ def create_store(request):
             return redirect('store_list')  # Redirect to your desired page after saving
     else:
         form = StoreForm()
-    return render(request, 'create_store.html', {'form': form})
+    return render(request, 'create_store.html', {'form': form, 'authenticated': request.user.is_authenticated})
 
 class StoreViewSet(viewsets.ModelViewSet):
     queryset = Store.objects.all()

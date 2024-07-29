@@ -6,7 +6,7 @@ class StoreSerializer(serializers.ModelSerializer):
     owner = UserSerializer(read_only=True)
     class Meta:
         model = Store
-        fields = ['id', 'owner', 'name']
+        fields = ['id', 'owner', 'name', 'description', 'phone']
         
     def create(self, validated_data):
         store = super().create(validated_data)

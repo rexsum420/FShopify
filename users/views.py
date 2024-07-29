@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login as auth_login
+from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import CustomUserCreationForm
 from rest_framework import viewsets, permissions
@@ -31,6 +31,10 @@ def register(request):
     else:
         form = CustomUserCreationForm()
     return render(request, 'register.html', {'form': form, 'next': next_url})
+
+def logout_view(request):
+    auth_logout(request)
+    return redirect('home')
 
 class IsAuthenticatedOrCreate(permissions.BasePermission):
     def has_permission(self, request, view):

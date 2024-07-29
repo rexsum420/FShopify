@@ -53,4 +53,5 @@ def create_product(request):
         'product_form': product_form,
         'tag_form': tag_form,
         'store_name': store_name,
+        'authenticated': request.user.is_authenticated
     })
