@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseForbidden
-from .forms import ProductForm, TagForm
+from .forms import ProductForm
 from .models import Tag, Product
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
@@ -15,43 +15,39 @@ class ProductViewSet(viewsets.ModelViewSet):
     authentication_classes = [TokenAuthentication]
 
     def perform_create(self, serializer):
-        serializer.save(store=self.request.user.store)
+        serializer.save(store=self.request.GET('store'))
 
 def create_product(request):
     if not request.user.is_authenticated:
         return redirect('/users/login/')
     
-    store_name = request.GET.get('store_name')
-    if not store_name:
-        return redirect('product_list')
-
-    store = get_object_or_404(Store, name=store_name)
-    if store.owner != request.user:
-        return HttpResponseForbidden("You do not own this store.")
-
     if request.method == 'POST':
+        store_id = request.POST.get('store')
+        store = get_object_or_404(Store, id=store_id, owner=request.user)
+        
         product_form = ProductForm(request.POST)
-        tag_form = TagForm(request.POST)
-        
-        if 'add_tag' in request.POST and tag_form.is_valid():
-            tag_name = tag_form.cleaned_data['name']
-            tag, created = Tag.objects.get_or_create(name=tag_name)
-            request.POST = request.POST.copy()
-            request.POST.setlist('tags', list(set(request.POST.getlist('tags') + [str(tag.id)])))
-        
-        if 'create_product' in request.POST and product_form.is_valid():
+        tags = request.POST.get('tags', '').split(',')
+
+        if product_form.is_valid():
             product = product_form.save(commit=False)
             product.store = store
             product.save()
             product_form.save_m2m()
-            return redirect('product_list')
+
+            for tag_name in tags:
+                tag_name = tag_name.strip()
+                if tag_name:
+                    tag, created = Tag.objects.get_or_create(name=tag_name)
+                    product.tags.add(tag)
+
+            product.save()
+            return redirect('view_store', store_name=store.name)
     else:
         product_form = ProductForm()
-        tag_form = TagForm()
-    
+        user_stores = Store.objects.filter(owner=request.user)
+
     return render(request, 'create_product.html', {
         'product_form': product_form,
-        'tag_form': tag_form,
-        'store_name': store_name,
+        'user_stores': user_stores,
         'authenticated': request.user.is_authenticated
     })

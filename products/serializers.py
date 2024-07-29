@@ -5,7 +5,7 @@ from store.serializers import StoreSerializer
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ['id', 'name', 'parent']
+        fields = ['id', 'name']
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:

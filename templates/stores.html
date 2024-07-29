@@ -1,15 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>My Stores</h1>
+<div class="d-flex justify-content-between align-items-center">
+    <h1>My Stores</h1>
+    <a href="{% url 'create-store' %}" class="btn btn-primary">Create Store</a>
+</div>
 {% if stores %}
-<ul>
+<ul class="list-unstyled mt-3">
     {% for store in stores %}
-    <li>
+    <li class="mb-2">
         <a href="{% url 'view_store' store.name %}">{{ store.name }}</a>
     </li>
     {% endfor %}
 </ul>
 {% else %}
-<p>No stores created yet</p>
+<p class="mt-3">No stores created yet</p>
 {% endif %}
 {% endblock content %}

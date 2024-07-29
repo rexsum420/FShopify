@@ -1,17 +1,23 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>{{ store.name }}</h1>
-<p>{{ store.description }}</p>
-<p>Phone: {{ store.phone }}</p>
+<div class="container">
+    <h1>{{ store.name }}</h1>
+    <p>{{ store.description }}</p>
+    <p>Phone: {{ store.phone }}</p>
 
-{% if products %}
-    <h2>Products</h2>
-    <ul>
-        {% for product in products %}
-            <li>{{ product.name }}</li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>No products available for this store.</p>
-{% endif %}
+    {% if products %}
+        <h2>Products</h2>
+        <ul class="list-unstyled">
+            {% for product in products %}
+                <li>{{ product.name }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No products available for this store.</p>
+    {% endif %}
+    
+    <div class="text-right mt-3">
+        <a href="{% url 'create-product' %}?store_name={{ store.name }}" class="btn btn-primary">Add Product</a>
+    </div>
+</div>
 {% endblock content %}

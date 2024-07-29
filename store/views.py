@@ -17,7 +17,7 @@ def create_store(request):
             store = form.save(commit=False)
             store.owner = request.user
             store.save()
-            return redirect('store_list')  # Redirect to your desired page after saving
+            return redirect('my-stores')  # Redirect to your desired page after saving
     else:
         form = StoreForm()
     return render(request, 'create_store.html', {'form': form, 'authenticated': request.user.is_authenticated})
