@@ -2,5 +2,5 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('create', views.create_product, name='create-product'),
+    path('create/<str:store_name>/', views.create_product, name='create-product'),
 ]

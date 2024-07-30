@@ -17,7 +17,7 @@
     {% endif %}
     
     <div class="text-right mt-3">
-        <a href="{% url 'create-product' %}?store_name={{ store.name }}" class="btn btn-primary">Add Product</a>
+        <a href="{% url 'create-product' store.name %}" class="btn btn-primary">Add Product</a>
     </div>
 </div>
 {% endblock content %}

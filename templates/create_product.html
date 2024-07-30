@@ -2,13 +2,13 @@
 {% block title %}Free Market Create Product{% endblock title %}
 {% block content %}
   <h2>Create Product</h2>
-  <form method="post">
+  <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="form-group">
       <label for="store-select">Select Store:</label>
       <select id="store-select" name="store" class="form-control" required>
         {% for store in user_stores %}
-          <option value="{{ store.id }}">{{ store.name }}</option>
+          <option value="{{ store.id }}" {% if store.name == store_name %}selected{% endif %}>{{ store.name }}</option>
         {% endfor %}
       </select>
     </div>
@@ -30,8 +30,16 @@
     </table>
     <ul id="tag-list"></ul>
     <input type="hidden" name="tags" id="tag-values">
+    <div class="form-group mt-3">
+      <label for="image-input">Upload Images:</label>
+      <input type="file" id="image-input" name="images" class="form-control" multiple>
+    </div>
+    <div id="image-preview" class="mt-3"></div>
+    <input type="hidden" name="main_image" id="main-image">
+    <input type="hidden" name="image_list" id="image-values">
     <button type="submit" name="create_product" class="btn btn-primary">Create Product</button>
   </form>
+
   <script>
     document.getElementById('add-tag').addEventListener('click', function() {
         const tagInput = document.getElementById('tag-input');
@@ -50,5 +58,52 @@
             tagInput.value = '';
         }
     });
+
+    document.getElementById('image-input').addEventListener('change', function() {
+        const imageInput = document.getElementById('image-input');
+        const imagePreview = document.getElementById('image-preview');
+        const imageValues = document.getElementById('image-values');
+        const mainImage = document.getElementById('main-image');
+
+        imagePreview.innerHTML = ''; // Clear previous previews
+        const currentImages = [];
+
+        for (const file of imageInput.files) {
+            currentImages.push(file.name);
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.classList.add('thumbnail');
+                img.dataset.filename = file.name;
+                img.addEventListener('click', function() {
+                    const thumbnails = document.querySelectorAll('.thumbnail');
+                    thumbnails.forEach(thumbnail => thumbnail.classList.remove('selected'));
+                    img.classList.add('selected');
+                    mainImage.value = img.dataset.filename;
+                });
+                imagePreview.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        imageValues.value = currentImages.join(',');
+        if (currentImages.length > 0) {
+            mainImage.value = currentImages[0]; // Set the first image as main by default
+        }
+    });
   </script>
+
+  <style>
+    .thumbnail {
+        width: 100px;
+        height: 100px;
+        margin: 5px;
+        cursor: pointer;
+        border: 2px solid transparent;
+    }
+    .thumbnail.selected {
+        border-color: blue;
+    }
+  </style>
 {% endblock %}
