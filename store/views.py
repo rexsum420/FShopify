@@ -15,12 +15,12 @@ from django.db.models.functions import Coalesce, Concat
 @login_required(login_url='login')
 def create_store(request):
     if request.method == 'POST':
-        form = StoreForm(request.POST)
+        form = StoreForm(request.POST, request.FILES)
         if form.is_valid():
             store = form.save(commit=False)
             store.owner = request.user
             store.save()
-            return redirect('my-stores')  # Redirect to your desired page after saving
+            return redirect('my-stores') 
     else:
         form = StoreForm()
     return render(request, 'create_store.html', {'form': form, 'authenticated': request.user.is_authenticated})

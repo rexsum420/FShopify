@@ -43,7 +43,10 @@
             </div>
         </div>
     {% else %}
+    <div class="d-flex row justify-content-between">
         <p>No products available for this store.</p>
+        <a href="{% url 'create-product' store.name %}" class="btn btn-primary">Add Product</a>
+    </div>
     {% endif %}
     
     <div class="text-right mt-3">

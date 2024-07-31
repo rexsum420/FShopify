@@ -133,3 +133,12 @@ nav {
 .thumbnail-image:hover {
     border: 2px solid #007bff;
 }
+
+label {
+    font-weight: bold;
+}
+
+.label-text {
+    font-weight: normal;
+    font-style: italic; 
+}
