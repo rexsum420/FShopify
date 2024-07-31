@@ -7,7 +7,10 @@ from .models import Store
 from .forms import StoreForm
 from .serializers import StoreSerializer
 from django.urls import reverse
-from products.models import Product
+from products.models import Product, Picture
+from django.http import HttpResponseForbidden
+from django.db.models import OuterRef, Subquery, Value, CharField
+from django.db.models.functions import Coalesce, Concat
 
 @login_required(login_url='login')
 def create_store(request):
@@ -28,10 +31,27 @@ def my_stores(request):
     return render(request, 'stores.html', {'stores': stores, 'authenticated': request.user.is_authenticated})
 
 @login_required(login_url='login')
+def edit_store(request, store_name):
+    store = get_object_or_404(Store, name=store_name)
+    if store:
+        isOwner = (request.user == store.owner)
+    if isOwner:
+        main_image = Picture.objects.filter(product=OuterRef('pk'), main=True).values('image')[:1]
+        products = Product.objects.filter(store=store).annotate(
+            main_image=Concat(Value('https://market.s3.amazonaws.com/'), Subquery(main_image, output_field=CharField()))
+        )        
+        return render(request, 'store.html', {'store': store, 'products': products, 'authenticated': request.user.is_authenticated})
+    else:
+        return HttpResponseForbidden('You are not the store owner and cannot edit this store')
+    
+@login_required(login_url='login')
 def view_store(request, store_name):
     store = get_object_or_404(Store, name=store_name)
-    products = Product.objects.filter(store=store)
-    return render(request, 'store.html', {'store': store, 'products': products, 'authenticated': request.user.is_authenticated})
+    main_image = Picture.objects.filter(product=OuterRef('pk'), main=True).values('image')[:1]
+    products = Product.objects.filter(store=store).annotate(
+            main_image=Concat(Value('https://market.s3.amazonaws.com/'), Subquery(main_image, output_field=CharField()))
+        )
+    return render(request, 'storefront.html', {'store': store, 'products': products, 'authenticated': request.user.is_authenticated})
 
 class StoreViewSet(viewsets.ModelViewSet):
     queryset = Store.objects.all()

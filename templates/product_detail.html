@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Free Market - Product Detail{% endblock title %}
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card product-detail-card p-3 bg-white">
+        <div class="about-product text-center mt-2">
+            <img id="main-image" src="{{ product.pictures.first.image.url }}" width="300">
+            <h4 class='mt-2'>{{ product.name }}</h4>
+        </div>
+        <div class="thumbnails mt-5 d-flex justify-content-center">
+            {% for picture in product.pictures.all %}
+                <img src="{{ picture.image.url }}" width="60" class="thumbnail-image mx-1" onclick="document.getElementById('main-image').src='{{ picture.image.url }}'">
+            {% endfor %}
+        </div>
+        <div class="stats mt-2">
+            <div class="d-flex justify-content-between p-price">
+                <span>Stock: </span>
+                <div class='d-flex'>
+                    {% if product.inventory.quantity <= product.inventory.low_stock_threshold %}
+                        <span style='margin-right:10px' class="badge badge-danger">Low</span>
+                    {% endif %}
+                    <span class="{% if product.inventory.quantity <= product.inventory.low_stock_threshold %}text-danger font-weight-bold{% endif %}">
+                        {{ product.inventory.quantity }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div class="d-flex justify-content-between total">
+            <span>Price: </span>
+            <span><b>${{ product.price }}</b></span>
+        </div>
+    </div>
+</div>
+{% endblock content %}

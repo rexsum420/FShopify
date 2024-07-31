@@ -2,21 +2,17 @@
 {% block title %}Free Market - {{ store.name }}{% endblock title %}
 {% block content %}
 <div class="container">
-    <h1 style='text-align:center;'>{{ store.name }}</h1>
-    <p style='text-align:center;'>{{ store.description }}</p>
-    <p style='text-align:center;'><small>Phone: {{ store.phone }}</small></p>
+    <h1>{{ store.name }}</h1>
+    <p>{{ store.description }}</p>
+    <p>Phone: {{ store.phone }}</p>
 
     {% if products %}
-        <div class="d-flex row justify-content-between">
         <h2>Products</h2>
-        <a href="{% url 'create-product' store.name %}" class="btn btn-primary">Add Product</a>
-        </div>
-        <hr color='white' />
         <div class="section-products">
             <div class="product-grid">
                 {% for product in products %}
                     <a href="{% url 'product-detail' %}?product_id={{ product.id }}">
-                        <div class="card product-list-card">
+                        <div class="card">
                             <img src="{{ product.main_image }}" alt="Product Image">
                             <h5>{{ product.name }}</h5>
                             <p>Price: {{ product.price }}</p>
@@ -28,9 +24,6 @@
     {% else %}
         <p>No products available for this store.</p>
     {% endif %}
-    
-    <div class="text-right mt-3">
-        
-    </div>
+
 </div>
 {% endblock content %}

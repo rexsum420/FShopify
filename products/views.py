@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponseForbidden
 from .forms import ProductForm
 from .models import Tag, Product, Picture
 from rest_framework import viewsets
@@ -9,6 +8,7 @@ from .serializers import ProductSerializer
 from store.models import Store
 from inventory.models import Inventory
 import logging
+from django.contrib.auth.decorators import login_required
 
 logger = logging.getLogger(__name__)
 
@@ -77,7 +77,7 @@ def create_product(request, store_name):
                     product.tags.add(tag)
 
             product.save()
-            return redirect('view_store', store_name=store.name)
+            return redirect('my-stores', store_name=store.name)
     else:
         product_form = ProductForm()
         user_stores = Store.objects.filter(owner=request.user)
@@ -87,4 +87,16 @@ def create_product(request, store_name):
         'user_stores': user_stores,
         'authenticated': request.user.is_authenticated,
         'store_name': store_name,
+    })
+
+@login_required(login_url='login')
+def product_detail(request):
+    product_id = request.GET.get('product_id')
+    product = get_object_or_404(Product, id=product_id)
+    inventory = get_object_or_404(Inventory, product=product)
+    
+    return render(request, 'product_detail.html', {
+        'product': product,
+        'inventory': inventory,
+        'authenticated': request.user.is_authenticated,
     })
