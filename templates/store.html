@@ -19,7 +19,21 @@
                         <div class="card product-list-card">
                             <img src="{{ product.main_image }}" alt="Product Image">
                             <h5>{{ product.name }}</h5>
-                            <p>Price: {{ product.price }}</p>
+                            {% if product.sale_price and product.sale_price > 0 %}
+                            <div class="d-flex justify-content-between total">
+                                <span>Price: </span>
+                                <span><s>${{ product.price }}</s></span>
+                            </div>
+                            <div class="d-flex justify-content-between total">
+                                <span>Sale Price: </span>
+                                <span style='color: #006000;'><b>${{ product.sale_price }}</b></span>
+                            </div>
+                        {% else %}
+                            <div class="d-flex justify-content-between total">
+                                <span>Price: </span>
+                                <span><b>${{ product.price }}</b></span>
+                            </div>
+                        {% endif %}
                         </div>
                     </a>
                 {% endfor %}

@@ -33,12 +33,14 @@ nav {
 }
 
 .product-list-card {
-    height: 300px; /* Fixed height for product list cards */
+    height: 300px; 
 }
 
 .product-detail-card {
-    height: auto;
-    width: 80%;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .card img {
@@ -50,6 +52,7 @@ nav {
 .product-detail-card img {
     width: 80%;
     height: auto;
+    max-height: calc(80vh - 200px);
     object-fit: contain;
 }
 
@@ -77,32 +80,32 @@ nav {
 
 .section-products .product-grid {
     display: grid;
-    grid-template-columns: repeat(1, 1fr); /* Default to 1 column */
+    grid-template-columns: repeat(1, 1fr); 
     gap: 20px;
 }
 
 /* Responsive Adjustments */
-@media (min-width: 576px) { /* sm screens */
+@media (min-width: 576px) {
     .section-products .product-grid {
-        grid-template-columns: repeat(2, 1fr); /* 2 columns */
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
 @media (min-width: 768px) { /* md screens */
     .section-products .product-grid {
-        grid-template-columns: repeat(4, 1fr); /* 4 columns */
+        grid-template-columns: repeat(4, 1fr);
     }
 }
 
 @media (min-width: 992px) { /* lg screens */
     .section-products .product-grid {
-        grid-template-columns: repeat(5, 1fr); /* 5 columns */
+        grid-template-columns: repeat(5, 1fr);
     }
 }
 
 @media (min-width: 1200px) { /* xl screens */
     .section-products .product-grid {
-        grid-template-columns: repeat(5, 1fr); /* 5 columns */
+        grid-template-columns: repeat(5, 1fr);
     }
 }
 
