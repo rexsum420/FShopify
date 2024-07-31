@@ -2,17 +2,21 @@
 {% block title %}Free Market - {{ store.name }}{% endblock title %}
 {% block content %}
 <div class="container">
-    <h1>{{ store.name }}</h1>
-    <p>{{ store.description }}</p>
-    <p>Phone: {{ store.phone }}</p>
+    <h1 style='text-align:center;'>{{ store.name }}</h1>
+    <p style='text-align:center;'>{{ store.description }}</p>
+    <p style='text-align:center;'><small>Phone: {{ store.phone }}</small></p>
 
     {% if products %}
         <h2>Products</h2>
+        <hr color='white' />
         <div class="section-products">
             <div class="product-grid">
                 {% for product in products %}
                     <a href="{% url 'product-detail' %}?product_id={{ product.id }}">
-                        <div class="card">
+                        <div class="card product-list-card">
+                            {% if product.created_at > new_threshold %}
+                                <span class="badge new-badge">New</span>
+                            {% endif %}
                             <img src="{{ product.main_image }}" alt="Product Image">
                             <h5>{{ product.name }}</h5>
                             {% if product.sale_price and product.sale_price > 0 %}
@@ -38,6 +42,9 @@
     {% else %}
         <p>No products available for this store.</p>
     {% endif %}
-
+    
+    <div class="text-right mt-3">
+        
+    </div>
 </div>
 {% endblock content %}

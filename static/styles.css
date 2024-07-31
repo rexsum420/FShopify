@@ -30,10 +30,11 @@ nav {
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     transition: transform 0.2s;
     padding: 5px;
+    position: relative;
 }
 
 .product-list-card {
-    height: 300px; 
+    height: 300px;
 }
 
 .product-detail-card {
@@ -59,6 +60,19 @@ nav {
 .card h5, .card p {
     margin: 0;
     padding: 10px;
+}
+
+/* New Badge */
+.new-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #ff0000;
+    color: #ffffff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    font-weight: bold;
 }
 
 /* Grid Layout */

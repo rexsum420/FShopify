@@ -30,6 +30,9 @@ def my_stores(request):
     stores = Store.objects.filter(owner=request.user)
     return render(request, 'stores.html', {'stores': stores, 'authenticated': request.user.is_authenticated})
 
+from datetime import timedelta
+from django.utils import timezone
+
 @login_required(login_url='login')
 def edit_store(request, store_name):
     store = get_object_or_404(Store, name=store_name)
@@ -39,10 +42,12 @@ def edit_store(request, store_name):
         main_image = Picture.objects.filter(product=OuterRef('pk'), main=True).values('image')[:1]
         products = Product.objects.filter(store=store).annotate(
             main_image=Concat(Value('https://market.s3.amazonaws.com/'), Subquery(main_image, output_field=CharField()))
-        )        
-        return render(request, 'store.html', {'store': store, 'products': products, 'authenticated': request.user.is_authenticated})
+        )
+        new_threshold = timezone.now() - timedelta(days=7)
+        return render(request, 'store.html', {'store': store, 'products': products, 'authenticated': request.user.is_authenticated, 'new_threshold': new_threshold})
     else:
         return HttpResponseForbidden('You are not the store owner and cannot edit this store')
+
     
 @login_required(login_url='login')
 def view_store(request, store_name):
@@ -51,7 +56,8 @@ def view_store(request, store_name):
     products = Product.objects.filter(store=store).annotate(
             main_image=Concat(Value('https://market.s3.amazonaws.com/'), Subquery(main_image, output_field=CharField()))
         )
-    return render(request, 'storefront.html', {'store': store, 'products': products, 'authenticated': request.user.is_authenticated})
+    new_threshold = timezone.now() - timedelta(days=7)
+    return render(request, 'storefront.html', {'store': store, 'products': products, 'authenticated': request.user.is_authenticated, 'new_threshold': new_threshold})
 
 class StoreViewSet(viewsets.ModelViewSet):
     queryset = Store.objects.all()

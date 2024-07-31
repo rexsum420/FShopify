@@ -17,6 +17,9 @@
                 {% for product in products %}
                     <a href="{% url 'product-detail' %}?product_id={{ product.id }}">
                         <div class="card product-list-card">
+                            {% if product.created_at > new_threshold %}
+                                <span class="badge new-badge">New</span>
+                            {% endif %}
                             <img src="{{ product.main_image }}" alt="Product Image">
                             <h5>{{ product.name }}</h5>
                             {% if product.sale_price and product.sale_price > 0 %}
