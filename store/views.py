@@ -49,16 +49,34 @@ def edit_store(request, store_name):
         return HttpResponseForbidden('You are not the store owner and cannot edit this store')
 
     
+from coupons.models import Coupon, ProductCoupon, UsedCoupon
+
 @login_required(login_url='login')
 def view_store(request, store_name):
     store = get_object_or_404(Store, name=store_name)
     main_image = Picture.objects.filter(product=OuterRef('pk'), main=True).values('image')[:1]
     products = Product.objects.filter(store=store).annotate(
-            main_image=Concat(Value('https://market.s3.amazonaws.com/'), Subquery(main_image, output_field=CharField()))
-        )
+        main_image=Concat(Value('https://market.s3.amazonaws.com/'), Subquery(main_image, output_field=CharField()))
+    )
+    
+    user_used_coupons = UsedCoupon.objects.filter(user=request.user).values_list('coupon_id', flat=True)
+    product_coupons = ProductCoupon.objects.filter(
+        product_id=OuterRef('pk'),
+        coupon__active=True,
+        coupon__expires_at__gt=timezone.now(),
+    ).exclude(coupon_id__in=user_used_coupons).values('coupon__discount')
+    
+    products = products.annotate(
+        discount=Subquery(product_coupons, output_field=CharField())
+    )
+    
     new_threshold = timezone.now() - timedelta(days=7)
-    return render(request, 'storefront.html', {'store': store, 'products': products, 'authenticated': request.user.is_authenticated, 'new_threshold': new_threshold})
-
+    return render(request, 'storefront.html', {
+        'store': store,
+        'products': products,
+        'authenticated': request.user.is_authenticated,
+        'new_threshold': new_threshold
+    })
 class StoreViewSet(viewsets.ModelViewSet):
     queryset = Store.objects.all()
     serializer_class = StoreSerializer

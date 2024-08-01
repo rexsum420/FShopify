@@ -37,6 +37,16 @@
                                 <span><b>${{ product.price }}</b></span>
                             </div>
                         {% endif %}
+                        {% if product.discount %}
+                            <div class="d-flex justify-content-between total">
+                                <span>Price: </span>
+                                <span><s>${{ product.price }}</s></span>
+                            </div>
+                            <div class="d-flex justify-content-between total">
+                                <span>Discounted Price: </span>
+                                <span style='color: #006000;'><b>${{ product.price|floatformat:2|add:"-product.discount"|floatformat:2 }}</b></span>
+                            </div>
+                        {% endif %}
                         </div>
                     </a>
                 {% endfor %}

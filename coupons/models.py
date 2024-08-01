@@ -14,13 +14,13 @@ class Coupon(models.Model):
     discount = models.DecimalField(max_digits=5, decimal_places=2)
     active = models.BooleanField(default=True)
     expires_at = models.DateTimeField()
-    coupon_type = models.CharField(max_length=10, choices=COUPON_TYPE_CHOICES, default='general')
+    coupon_type = models.CharField(max_length=10, choices=COUPON_TYPE_CHOICES, default='product')
 
 class ProductCoupon(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     coupon = models.ForeignKey(Coupon, on_delete=models.CASCADE, related_name='product_coupons')
 
-class UserCoupon(models.Model):
+class UsedCoupon(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     coupon = models.ForeignKey(Coupon, on_delete=models.CASCADE)
     used_at = models.DateTimeField(auto_now_add=True)

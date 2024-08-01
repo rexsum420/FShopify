@@ -9,6 +9,7 @@ from store.models import Store
 from inventory.models import Inventory
 import logging
 from django.contrib.auth.decorators import login_required
+from analytics.models import Analytic
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +23,8 @@ class ProductViewSet(viewsets.ModelViewSet):
         store_id = self.request.data.get('store')
         store = get_object_or_404(Store, id=store_id, owner=self.request.user)
         serializer.save(store=store)
-
+        
+@login_required(login_url='login')
 def create_product(request, store_name):
     if not request.user.is_authenticated:
         return redirect('/users/login/')
@@ -48,8 +50,7 @@ def create_product(request, store_name):
                 quantity=product_form.cleaned_data['quantity'],
                 low_stock_threshold=product_form.cleaned_data['low_stock_threshold']
             )
-
-            # Handle image uploads
+            
             images = request.FILES.getlist('images')
             logger.debug(f"Images received: {images}")
             main_image_set = False
@@ -89,12 +90,25 @@ def create_product(request, store_name):
         'store_name': store_name,
     })
 
-@login_required(login_url='login')
 def product_detail(request):
     product_id = request.GET.get('product_id')
     product = get_object_or_404(Product, id=product_id)
     inventory = get_object_or_404(Inventory, product=product)
-    
+
+    if product and request.user.is_authenticated:
+        words = set(product.name.lower().split() + product.description.lower().split())
+        tags = set()
+        tags = product.tags
+
+        for word in words:
+            tag, created = Tag.objects.get_or_create(name=word)
+            tags.add(tag)
+        
+        for tag in tags:
+            analytic, created = Analytic.objects.get_or_create(tag=tag, user=request.user)
+            analytic.views += 1
+            analytic.save()
+
     return render(request, 'product_detail.html', {
         'product': product,
         'inventory': inventory,
