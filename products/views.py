@@ -96,7 +96,7 @@ def product_detail(request):
     inventory = get_object_or_404(Inventory, product=product)
 
     if product and request.user.is_authenticated:
-        words = set(product.name.lower().split() + product.description.lower().split())
+        words = set(product.name.lower().split() + product.description.lower().split() + product.category.name.lower().split())
         tags = set()
         tags = product.tags
 
