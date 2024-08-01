@@ -2,19 +2,19 @@
 {% block title %}Free Market View Cart{% endblock title %}
 {% block content %}
 <h1>Shopping Cart</h1>
-<table>
+<table style='border-width=1px; border-style: solid; border-color: #000000;'>
     <thead>
         <tr>
-            <th>Product</th>
-            <th>Price</th>
-            <th>Quantity</th>
-            <th>Total</th>
-            <th>Actions</th>
+            <th width='70%'>Product</th>
+            <th width='10%'>Price</th>
+            <th width='10%'>Quantity</th>
+            <th width='10%'>Total</th>
+            <th width='10%'>Actions</th>
         </tr>
     </thead>
     <tbody>
         {% for item in cart %}
-        <tr>
+        <tr style='border-width=1px; border-style: solid; border-color: #000000;'>
             <td>{{ item.product.name }}</td>
             <td>${{ item.price }}</td>
             <td>{{ item.quantity }}</td>
@@ -26,9 +26,13 @@
                 </form>
             </td>
         </tr>
+        {% empty %}
+        <tr style='border-width=1px; border-style: solid; border-color: #000000;'>
+            <td colspan="5" style="text-align:center;">There are no items in the cart</td>
+        </tr>
         {% endfor %}
     </tbody>
 </table>
-<p>Total: ${{ cart.get_total_price }}</p>
-<a href="{% url 'checkout' %}">Proceed to Checkout</a>
+<p style='text-align:right'><b>Total: ${{ cart.get_total_price }}</b></p>
+<a class="btn btn-primary" href="{% url 'checkout' %}">Proceed to Checkout</a>
 {% endblock %}

@@ -1,7 +1,8 @@
+{% load static %}
 {% if authenticated %}
 <nav class="navbar navbar-dark bg-dark">
     <div class="d-flex align-items-center ml-auto">
-        <a class="navbar-brand d-none d-md-block" href="{% url 'home' %}">My E-commerce Site</a>
+        <a class="navbar-brand d-none d-md-block" href="{% url 'home' %}"><img src="{% static 'freemarket-white.png' %}" style="height:32px;" /></a>
         <div class="d-flex flex-grow-1 align-items-center justify-content-center">
             <form class="form-inline d-flex input-group" action="{% url 'search' %}" method="get">
                 <input class="form-control" type="search" name="q" placeholder="Search" aria-label="Search">
@@ -40,7 +41,7 @@
 {% else %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="d-flex align-items-center ml-auto">
-        <a class="navbar-brand d-none d-md-block" href="{% url 'home' %}">My E-commerce Site</a>
+        <a class="navbar-brand d-none d-md-block" href="{% url 'home' %}">{% static 'freemarket-white.png' %}</a>
         <div class="d-flex flex-grow-1 align-items-center justify-content-center">
             <form class="form-inline d-flex input-group" action="{% url 'search' %}" method="get">
                 <input class="form-control" type="search" name="q" placeholder="Search" aria-label="Search">
