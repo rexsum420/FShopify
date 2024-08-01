@@ -20,5 +20,6 @@ urlpatterns = [
     path('stores/', include('store.urls')),
     path('products/', include('products.urls')),
     path('cart/', include('cart.urls')),
+    path('search/', include('search.urls')),
     path('', views.index, name='home'),
 ]
