@@ -11,6 +11,7 @@ from products.models import Product, Picture
 from django.http import HttpResponseForbidden
 from django.db.models import OuterRef, Subquery, Value, CharField
 from django.db.models.functions import Coalesce, Concat
+from coupons.models import Coupon, ProductCoupon, UsedCoupon
 
 @login_required(login_url='login')
 def create_store(request):
@@ -48,10 +49,6 @@ def edit_store(request, store_name):
     else:
         return HttpResponseForbidden('You are not the store owner and cannot edit this store')
 
-    
-from coupons.models import Coupon, ProductCoupon, UsedCoupon
-
-@login_required(login_url='login')
 def view_store(request, store_name):
     store = get_object_or_404(Store, name=store_name)
     main_image = Picture.objects.filter(product=OuterRef('pk'), main=True).values('image')[:1]
@@ -77,6 +74,7 @@ def view_store(request, store_name):
         'authenticated': request.user.is_authenticated,
         'new_threshold': new_threshold
     })
+    
 class StoreViewSet(viewsets.ModelViewSet):
     queryset = Store.objects.all()
     serializer_class = StoreSerializer

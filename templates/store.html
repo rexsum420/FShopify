@@ -2,9 +2,13 @@
 {% block title %}Free Market - {{ store.name }}{% endblock title %}
 {% block content %}
 <div class="container">
-    <h1 style='text-align:center;'>{{ store.name }}</h1>
-    <p style='text-align:center;'>{{ store.description }}</p>
-    <p style='text-align:center;'><small>Phone: {{ store.phone }}</small></p>
+    {% if not store.banner %}
+        <h1 style='text-align:center;'>{{ store.name }}</h1>
+    {% else %}
+        <img src="{{ store.banner.url }}" alt="{{ store.name }}" style="display: block; height:300px; width: auto; margin-right:auto; margin-left:auto;">
+    {% endif %}
+    <p style='text-align:center;'>{{ store.description }}<br />
+    <small><b>Phone: {{ store.phone }}</b></small></p>
 
     {% if products %}
         <div class="d-flex row justify-content-between">

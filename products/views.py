@@ -114,3 +114,69 @@ def product_detail(request):
         'inventory': inventory,
         'authenticated': request.user.is_authenticated,
     })
+    
+@login_required(login_url='login')
+def edit_product(request, store_name, product_id):
+    store = get_object_or_404(Store, name=store_name, owner=request.user)
+    product = get_object_or_404(Product, id=product_id, store=store)
+
+    if request.method == 'POST':
+        logger.debug(f"POST data: {request.POST}")
+        logger.debug(f"FILES: {request.FILES}")
+
+        product_form = ProductForm(request.POST, request.FILES, instance=product)
+        tags = request.POST.get('tags', '').split(',')
+        main_image_filename = request.POST.get('main_image', '')
+
+        if product_form.is_valid():
+            product = product_form.save(commit=False)
+            product.store = store
+            product.save()
+            product_form.save_m2m()
+
+            inventory = Inventory.objects.get(product=product)
+            inventory.quantity = product_form.cleaned_data['quantity']
+            inventory.low_stock_threshold = product_form.cleaned_data['low_stock_threshold']
+            inventory.save()
+            
+            images = request.FILES.getlist('images')
+            logger.debug(f"Images received: {images}")
+            main_image_set = False
+
+            if images:
+                product.pictures.all().delete()
+                for index, image in enumerate(images):
+                    is_main_image = False
+                    if main_image_filename and image.name == main_image_filename:
+                        is_main_image = True
+                    elif not main_image_filename and index == 0:
+                        is_main_image = True
+                    picture = Picture.objects.create(product=product, image=image, main=is_main_image)
+                    if is_main_image:
+                        main_image_set = True
+
+                if not main_image_set and images:
+                    first_picture = Picture.objects.filter(product=product).first()
+                    if first_picture:
+                        first_picture.main = True
+                        first_picture.save()
+
+            for tag_name in tags:
+                tag_name = tag_name.strip()
+                if tag_name:
+                    tag, created = Tag.objects.get_or_create(name=tag_name)
+                    product.tags.add(tag)
+
+            product.save()
+            return redirect('my-stores', store_name=store.name)
+    else:
+        product_form = ProductForm(instance=product)
+        user_stores = Store.objects.filter(owner=request.user)
+
+    return render(request, 'edit_product.html', {
+        'product_form': product_form,
+        'user_stores': user_stores,
+        'authenticated': request.user.is_authenticated,
+        'store_name': store_name,
+        'product': product,
+    })

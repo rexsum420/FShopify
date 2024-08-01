@@ -11,7 +11,7 @@ class CaptureIPAddressMiddleware(MiddlewareMixin):
         try:
             user, _ = token_authentication.authenticate(request)
             if user:
-                user.ip_addres = ip_address
+                user.ip_address = ip_address
                 user.save()
         except:
             pass
