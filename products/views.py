@@ -99,9 +99,9 @@ def product_detail(request):
     ratings = Rating.objects.filter(product=product)
     user_has_rated = (len(Rating.objects.filter(product=product, user=request.user)) > 0)
     user_has_reviewed = (len(Review.objects.filter(product=product, user=request.user)) > 0)
-    stars = range(1,6)
+    stars = range(1, 6)
     main_image = product.pictures.filter(main=True).first()
-    
+
     if len(reviews) == 0:
         reviews = None
     else:
@@ -110,15 +110,17 @@ def product_detail(request):
         rating = None
     else:
         rating = int((sum(rating.rating for rating in ratings) / len(ratings)) + .5)
-    
+
+    stop_words = set(["a", "and", "is", "it", "this", "the", "of", "in", "to", "with", "for", "on", "at", "by", "from", "an", "or", "as", "but", "not", "be", "are", "has", "have", "had", "that", "which", "who", "whom", "whose", "where", "when", "why", "how", "there", "here", "&"])
+
     if product and request.user.is_authenticated:
-        words = set(product.name.lower().split() + product.description.lower().split() + product.category.name.lower().split())
+        words = set(word for word in (product.name + " " + product.description + " " + product.category.name).lower().split() if word not in stop_words)
         tags = product.tags.all()
 
         for word in words:
             tag, created = Tag.objects.get_or_create(name=word)
             if created:
-                tags.add(tag) 
+                tags.add(tag)
 
         for tag in tags:
             analytic, created = Analytic.objects.get_or_create(tag=tag, user=request.user)

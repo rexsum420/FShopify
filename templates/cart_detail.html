@@ -7,8 +7,17 @@
 </center>
 <hr />
 <h1>Shopping Cart</h1>
-<table style='border-width=1px; border-style: solid; border-color: #000000;'>
-    <thead>
+<table style='border-width:1px; border-style: solid; border-color: #000000;'>
+    <thead class="table-header-md">
+        <tr>
+            <th width='30%'>Product</th>
+            <th width='10%'>Price</th>
+            <th width='10%'>Qty.</th>
+            <th width='10%'>Total</th>
+            <th width='10%'>Actions</th>
+        </tr>
+    </thead>
+    <thead class="table-header-lg">
         <tr>
             <th width='70%'>Product</th>
             <th width='10%'>Price</th>
@@ -19,7 +28,7 @@
     </thead>
     <tbody>
         {% for item in cart %}
-        <tr style='border-width=1px; border-style: solid; border-color: #000000;'>
+        <tr style='border-width:1px; border-style: solid; border-color: #000000;'>
             <td>{{ item.product.name }}</td>
             <td>${{ item.price }}</td>
             <td>
@@ -50,7 +59,7 @@
             </td>
         </tr>
         {% empty %}
-        <tr style='border-width=1px; border-style: solid; border-color: #000000;'>
+        <tr style='border-width:1px; border-style: solid; border-color: #000000;'>
             <td colspan="5" style="text-align:center;">There are no items in the cart</td>
         </tr>
         {% endfor %}

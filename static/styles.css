@@ -328,3 +328,25 @@ label {
 .thumbnails-container::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
+
+/* Base styles for medium screens and below */
+.table-header-md {
+    display: table-header-group;
+    width: 100%;
+}
+
+.table-header-lg {
+    display: none;
+}
+
+/* Media query for large screens and above */
+@media (min-width: 992px) {
+    .table-header-md {
+        display: none;
+    }
+
+    .table-header-lg {
+        display: table-header-group;
+        width: 100%;
+    }
+}
