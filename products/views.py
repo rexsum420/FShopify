@@ -10,6 +10,7 @@ from inventory.models import Inventory
 import logging
 from django.contrib.auth.decorators import login_required
 from analytics.models import Analytic
+from reviews.models import Review, Rating
 
 logger = logging.getLogger(__name__)
 
@@ -78,7 +79,7 @@ def create_product(request, store_name):
                     product.tags.add(tag)
 
             product.save()
-            return redirect('my-stores', store_name=store.name)
+            return redirect('my-stores')
     else:
         product_form = ProductForm()
         user_stores = Store.objects.filter(owner=request.user)
@@ -94,16 +95,30 @@ def product_detail(request):
     product_id = request.GET.get('product_id')
     product = get_object_or_404(Product, id=product_id)
     inventory = get_object_or_404(Inventory, product=product)
-
+    reviews = Review.objects.filter(product=product).order_by('-created_at')
+    ratings = Rating.objects.filter(product=product)
+    user_has_rated = (len(Rating.objects.filter(product=product, user=request.user)) > 0)
+    user_has_reviewed = (len(Review.objects.filter(product=product, user=request.user)) > 0)
+    stars = range(1,6)
+    
+    if len(reviews) == 0:
+        reviews = None
+    else:
+        reviews = reviews[:3]
+    if len(ratings) == 0:
+        rating = None
+    else:
+        rating = int((sum(rating.rating for rating in ratings) / len(ratings)) + .5)
+    
     if product and request.user.is_authenticated:
         words = set(product.name.lower().split() + product.description.lower().split() + product.category.name.lower().split())
-        tags = set()
-        tags = product.tags
+        tags = product.tags.all()
 
         for word in words:
             tag, created = Tag.objects.get_or_create(name=word)
-            tags.add(tag)
-        
+            if created:
+                tags.add(tag) 
+
         for tag in tags:
             analytic, created = Analytic.objects.get_or_create(tag=tag, user=request.user)
             analytic.views += 1
@@ -113,7 +128,13 @@ def product_detail(request):
         'product': product,
         'inventory': inventory,
         'authenticated': request.user.is_authenticated,
+        'rating': rating,
+        'reviews': reviews,
+        'stars': stars,
+        'has_rated': user_has_rated,
+        'has_reviewed': user_has_reviewed,
     })
+
     
 @login_required(login_url='login')
 def edit_product(request, store_name, product_id):
@@ -177,6 +198,5 @@ def edit_product(request, store_name, product_id):
         'product_form': product_form,
         'user_stores': user_stores,
         'authenticated': request.user.is_authenticated,
-        'store_name': store_name,
         'product': product,
     })

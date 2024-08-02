@@ -20,6 +20,7 @@ class Tag(models.Model):
     
     def __str__(self):
         return self.name
+    
 class Product(models.Model):
     name = models.CharField(max_length=255)
     store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name='product')
@@ -29,6 +30,7 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     tags = models.ManyToManyField(Tag)
     created_at = models.DateTimeField(auto_now_add=True)
+    
 
     def __str__(self):
         return self.name

@@ -1,54 +1,131 @@
 {% extends "base.html" %}
+{% load custom_filters %}
 {% block title %}Free Market - Product Detail{% endblock title %}
 {% block content %}
-<div class="container d-flex justify-content-center align-items-center min-vh-100">
-    <div class="card product-detail-card p-3 bg-white">
-        <div class="about-product text-center">
-            <img id="main-image" src="{{ product.pictures.first.image.url }}" width="300">
-            <div class="thumbnails mt-2 d-flex justify-content-center">
-                {% for picture in product.pictures.all %}
-                    <img src="{{ picture.image.url }}" width="60" class="thumbnail-image mx-1" onclick="document.getElementById('main-image').src='{{ picture.image.url }}'">
-                {% endfor %}
-            </div>
-            <h4 class='mt-2'>{{ product.name }}</h4>
-            <h5><small>{{ product.description }}</small></h5>
+<div style="border: 2px solid #dfe5e9; margin-bottom: 20px; margin-top: 12px; background: #fff; padding: 4px; box-shadow: 0 1px 4px 0 rgba(0,0,0,0.37); max-width: 100%; margin-left: auto; margin-right: auto; overflow: hidden;">
+    <div style="display: flex; flex-wrap: wrap;">
+        <div style="flex: 1 1 100%; max-width: 100%; position: relative; background-color: #fff; height: 238px; overflow: hidden; display: flex; justify-content: center; align-items: center;">
+            <img src="{{ product.pictures.first.image.url }}" alt="product image" style="max-height: 100%; width: auto;">
         </div>
-        <div class="stats mt-2">
-            <div class="d-flex justify-content-between p-price">
-                <span>Stock: </span>
-                <div class='d-flex'>
-                    {% if product.inventory.quantity <= product.inventory.low_stock_threshold %}
-                        <span style='margin-right:10px' class="badge badge-danger">Low</span>
-                    {% endif %}
-                    <span class="{% if product.inventory.quantity <= product.inventory.low_stock_threshold %}text-danger font-weight-bold{% endif %}">
-                        {{ product.inventory.quantity }}
-                    </span>
+        <div style="flex: 1 1 100%; max-width: 100%; padding: 16px;">
+            <div style="border-bottom: 1px solid #dfe5e9; padding-bottom: 17px;">
+                <h5 style="margin: 0;">
+                    <a href="#" style="color: #2f383d; font-size: 15px; line-height: 19px; text-decoration: none;">
+                        {{ product.name }} <span style="color: #9aa7af; display: block; font-size: 13px;">{{ product.category.name }}</span>
+                    </a>
+                </h5>
+                {% if product.sale_price and product.sale_price > 0 %}
+                <div style="display: flex; align-items: center;">
+                    <div style="font-size: 24px; margin: 0; font-weight: 300; color: #21c2f8;">
+                        <span><s>${{ product.price }}</s></span>
+                    </div>
+                    <div style="font-size: 24px; margin: 0; font-weight: 300; color: #21c2f8; margin-left: 10px;">
+                        <span>${{ product.sale_price }}</span>
+                    </div>
                 </div>
+                {% else %}
+                <p style="font-size: 24px; margin: 0; font-weight: 300; color: #21c2f8;">
+                    <span>${{ product.price }}</span>
+                </p>
+                {% endif %}
             </div>
+            <div style="font-size: 12.5px; line-height: 20px; padding: 10px 0;">
+                <p>{{ product.description }}</p>
+            </div>
+            <div style="padding: 11px 0;">
+                <div style="display: flex; justify-content: space-between;">
+                    <form action="{% url 'cart_add' product.id %}" method="post">
+                        {% csrf_token %}
+                        <div style="display: flex; justify-content: space-between;">
+                            <input type="number" name="quantity" value="1" class="form-control" style="display: inline-block; width: 60px;">
+                            <input type="submit" value="Add to cart" class="btn btn-primary" style="margin-left: 10px;">
+                        </div>
+                    </form>
+                </div>
+                <center>
+                    {% if rating %}
+                    <div style="display: flex; align-items: center; justify-content: center; margin-top: 10px;">
+                        {% for i in stars %}
+                            {% if i <= rating %}
+                                <label style="margin-right: 2px;"><i class="fa fa-star text-primary"></i></label>
+                            {% else %}
+                                <label style="margin-right: 2px;"><i class="fa fa-star"></i></label>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div style="display: flex; align-items: center; justify-content: center; margin-top: 10px;">
+                        <i>No ratings yet.</i>
+                    </div>
+                    {% endif %}
+                </center>
+            </div>
+            <!-- Rating Form -->
+            {% if not has_rated %}
+            <div style="padding: 20px 0;">
+                <form action="{% url 'create-rating' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                    <div style="display: flex; justify-content: center;">
+                        {% for i in stars %}
+                            <label style="margin-right: 2px;">
+                                <a href="{% url 'create-rating' %}?rating={{i}}&product_id={{product.id}}">
+                                <i class="fa fa-star"></i>
+                                </a>
+                            </label>
+                        {% endfor %}
+                    </div>
+                </form>
+            </div>
+            {% else %}
+            <div style="padding: 20px 0;">
+                <i>You have already rated this product.</i>
+            </div>
+            {% endif %}
         </div>
-        <hr />
-        {% if product.sale_price and product.sale_price > 0 %}
-            <div class="d-flex justify-content-between total">
-                <span>Price: </span>
-                <span><s>${{ product.price }}</s></span>
-            </div>
-            <div class="d-flex justify-content-between total">
-                <span><b>Sale Price: </b></span>
-                <span style='color: #006000;'><b>${{ product.sale_price }}</b></span>
-            </div>
-        {% else %}
-            <div class="d-flex justify-content-between total">
-                <span><b>Price: </b></span>
-                <span><b>${{ product.price }}</b></span>
-            </div>
-        {% endif %}
     </div>
-    <div class='d-flex justify-content-around'>
-        <form action="{% url 'cart_add' product.id %}" method="post">
-            {% csrf_token %}
-            <input type="number" name="quantity" value="1">
-            <input type="submit" value="Add to cart">
-        </form>
-    </div>        
+</div>
+
+<div style="border: 2px solid #dfe5e9; margin-bottom: 20px; margin-top: 12px; background: #fff; padding: 4px; box-shadow: 0 1px 4px 0 rgba(0,0,0,0.37); max-width: 100%; margin-left: auto; margin-right: auto; overflow: hidden;">
+    <h4 style="padding: 10px;">Latest Reviews</h4>
+    {% if reviews %}
+        {% for review in reviews %}
+            <div style="padding: 10px; border-bottom: 1px solid #dfe5e9;">
+                <p><strong>{{ review.user.username }}</strong> - {{ review.created_at|date:"Y-m-d" }}</p>
+                <div style="display: flex;">
+                    {% if has_rated %}
+                    {% for i in stars %}
+                        {% if i <= rating %}
+                            <i class="fa fa-star text-primary"></i>
+                        {% else %}
+                            <i class="fa fa-star"></i>
+                        {% endif %}
+                    {% endfor %}
+                    {% else %}
+                    <i>(unrated)</i>
+                    {% endif %}
+                </div>
+                <p>{{ review.comment }}</p>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p style="padding: 10px;">No reviews yet.</p>
+    {% endif %}
+</div>
+<div style="border: 2px solid #dfe5e9; margin-bottom: 20px; margin-top: 12px; background: #fff; padding: 4px; box-shadow: 0 1px 4px 0 rgba(0,0,0,0.37); max-width: 100%; margin-left: auto; margin-right: auto; overflow: hidden;">
+    {% if not has_reviewed %}
+    <form action='{% url "create-review" %}' method='POST'>
+        {% csrf_token %}
+        <input type="hidden" name="product" value="{{ product.id }}">
+        <textarea style='rows:1; width:100%' name="comment" placeholder="Write your review here..."></textarea><br/>
+        <div class='d-flex justify-content-end'>
+        <button type='submit' class='btn btn-primary'>Submit</button>
+        </div>
+    </form>
+    {% else %}
+    <div style="padding: 20px 0;">
+        <i>You have already reviewed this product.</i>
+    </div>
+    {% endif %}
 </div>
 {% endblock content %}
