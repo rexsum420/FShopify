@@ -22,7 +22,23 @@
         <tr style='border-width=1px; border-style: solid; border-color: #000000;'>
             <td>{{ item.product.name }}</td>
             <td>${{ item.price }}</td>
-            <td>{{ item.quantity }}</td>
+            <td>
+                <form action="{% url 'decrease_quantity' item.product.id %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="quantity" value="1">
+                    <button type="submit" class="btn btn-link p-0 m-0 align-baseline">
+                        <i style='color:#C00000' class="fas fa-minus"></i>
+                    </button>
+                </form>
+                {{ item.quantity }}
+                <form action="{% url 'increase_quantity' item.product.id %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="quantity" value="1">
+                    <button type="submit" class="btn btn-link p-0 m-0 align-baseline">
+                        <i style='color:#00C000' class="fas fa-plus"></i>
+                    </button>
+                </form>
+            </td>
             <td>${{ item.total_price }}</td>
             <td style='text-align:center' >
                 <form action="{% url 'cart_remove' item.product.id %}" method="post">

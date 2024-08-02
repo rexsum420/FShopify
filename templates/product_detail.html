@@ -28,16 +28,16 @@
             <div style="border-bottom: 1px solid #dfe5e9; padding-bottom: 17px;">
                 {% if product.sale_price and product.sale_price > 0 %}
                 <div style="display: flex; align-items: center;">
-                    <div style="font-size: 24px; margin: 0; font-weight: 300; color: #21c2f8;">
+                    <div style="font-size: 24px; margin: 0; font-weight: 300; color: #808080;">
                         <span><s>${{ product.price }}</s></span>
                     </div>
-                    <div style="font-size: 24px; margin: 0; font-weight: 300; color: #21c2f8; margin-left: 10px;">
-                        <span>${{ product.sale_price }}</span>
+                    <div style="font-size: 24px; margin: 0; font-weight: 300; color: #00C000; margin-left: 10px;">
+                        <span><b>${{ product.sale_price }}</b></span>
                     </div>
                 </div>
                 {% else %}
                 <p style="font-size: 24px; margin: 0; font-weight: 300; color: #21c2f8;">
-                    <span>${{ product.price }}</span>
+                    <span><b>${{ product.price }}</b></span>
                 </p>
                 {% endif %}
             </div>
