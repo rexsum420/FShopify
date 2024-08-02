@@ -11,3 +11,6 @@ products/pictures/*
 products/pictures/
 staticfiles/*
 staticfiles/
+
+fshopify
+fshopify.pub
