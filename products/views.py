@@ -100,6 +100,7 @@ def product_detail(request):
     user_has_rated = (len(Rating.objects.filter(product=product, user=request.user)) > 0)
     user_has_reviewed = (len(Review.objects.filter(product=product, user=request.user)) > 0)
     stars = range(1,6)
+    main_image = product.pictures.filter(main=True).first()
     
     if len(reviews) == 0:
         reviews = None
@@ -133,6 +134,7 @@ def product_detail(request):
         'stars': stars,
         'has_rated': user_has_rated,
         'has_reviewed': user_has_reviewed,
+        'main_image': main_image.image.url,
     })
 
     

@@ -45,8 +45,20 @@ class Cart:
     def __len__(self):
         return sum(item['quantity'] for item in self.cart.values())
 
+    def get_subtotal_price(self):
+        subtotal = sum(float(item['price']) * item['quantity'] for item in self.cart.values())
+        return f"{subtotal:.2f}"
+
+    def get_tax_price(self):
+        subtotal = float(self.get_subtotal_price())
+        tax = subtotal * 0.0825
+        return f"{tax:.2f}"
+
     def get_total_price(self):
-        return sum(float(item['price']) * item['quantity'] for item in self.cart.values())
+        subtotal = float(self.get_subtotal_price())
+        tax = float(self.get_tax_price())
+        total = subtotal + tax
+        return f"{total:.2f}"
 
     def clear(self):
         del self.session[settings.CART_SESSION_ID]

@@ -1,10 +1,14 @@
- <h1>Search Results</h1>
+{% extends "base.html" %}
+{% block title %}Free Market Search{% endblock title %}
+{% block content %}
+<h1>Search Results</h1>
 <ul>
     {% for product in products %}
         <li>
-            <a href="{% url 'product_detail' product.id %}">{{ product.name }}</a> - {{ product.description }}
+            <a href="{% url 'product-detail' %}?product_id={{product.id}}">{{ product.name }}</a> - {{ product.description }}
         </li>
     {% empty %}
         <li>No products found.</li>
     {% endfor %}
 </ul>
+{% endblock %}
