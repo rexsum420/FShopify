@@ -70,6 +70,7 @@
                 </center>
             </div>
             <!-- Rating Form -->
+            {% if user.is_authenticated %}
             {% if not has_rated %}
             <div style="padding: 20px 0;">
                 <form action="{% url 'create-rating' %}" method="post">
@@ -91,6 +92,11 @@
                 <i>You have already rated this product.</i>
             </div>
             {% endif %}
+            {% else %}
+            <div style="padding: 20px 0;">
+                <i>Please login to rate this product.</i>
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>
@@ -98,30 +104,32 @@
 <div style="border: 2px solid #dfe5e9; margin-bottom: 20px; margin-top: 12px; background: #fff; padding: 4px; box-shadow: 0 1px 4px 0 rgba(0,0,0,0.37); max-width: 350px; margin-left: auto; margin-right: auto; overflow: hidden;">
     <h4 style="padding: 10px;">Latest Reviews</h4>
     {% if reviews %}
-        {% for review in reviews %}
-            <div style="padding: 10px; border-bottom: 1px solid #dfe5e9;">
-                <p><strong>{{ review.user.username }}</strong> - {{ review.created_at|date:"Y-m-d" }}</p>
-                <div style="display: flex;">
-                    {% if has_rated %}
+    {% for review in reviews %}
+        <div style="padding: 10px; border-bottom: 1px solid #dfe5e9;">
+            <p><strong>{{ review.user.username }}</strong> - {{ review.created_at|date:"Y-m-d" }}</p>
+            <div style="display: flex;">
+                {% if review.rating %}
                     {% for i in stars %}
-                        {% if i <= rating %}
+                        {% if i <= review.rating %}
                             <i class="fa fa-star text-primary"></i>
                         {% else %}
                             <i class="fa fa-star"></i>
                         {% endif %}
                     {% endfor %}
-                    {% else %}
+                {% else %}
                     <i>(unrated)</i>
-                    {% endif %}
-                </div>
-                <p>{{ review.comment }}</p>
+                {% endif %}
             </div>
-        {% endfor %}
-    {% else %}
-        <p style="padding: 10px;">No reviews yet.</p>
-    {% endif %}
+            <p>{{ review.comment }}</p>
+        </div>
+    {% endfor %}
+{% else %}
+    <p style="padding: 10px;">No reviews yet.</p>
+{% endif %}
+
 </div>
 <div style="border: 2px solid #dfe5e9; margin-bottom: 20px; margin-top: 12px; background: #fff; padding: 4px; box-shadow: 0 1px 4px 0 rgba(0,0,0,0.37); max-width: 350px; margin-left: auto; margin-right: auto; overflow: hidden;">
+    {% if user.is_authenticated %}
     {% if not has_reviewed %}
     <form action='{% url "create-review" %}' method='POST'>
         {% csrf_token %}
@@ -134,6 +142,11 @@
     {% else %}
     <div style="padding: 20px 0;">
         <i>You have already reviewed this product.</i>
+    </div>
+    {% endif %}
+    {% else %}
+    <div style="padding: 20px 0;">
+        <i>Please login to review this product.</i>
     </div>
     {% endif %}
 </div>

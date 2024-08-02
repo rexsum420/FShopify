@@ -11,6 +11,7 @@ import logging
 from django.contrib.auth.decorators import login_required
 from analytics.models import Analytic
 from reviews.models import Review, Rating
+from django.db.models import OuterRef, Subquery
 
 logger = logging.getLogger(__name__)
 
@@ -97,21 +98,32 @@ def product_detail(request):
     inventory = get_object_or_404(Inventory, product=product)
     reviews = Review.objects.filter(product=product).order_by('-created_at')
     ratings = Rating.objects.filter(product=product)
-    user_has_rated = (len(Rating.objects.filter(product=product, user=request.user)) > 0)
-    user_has_reviewed = (len(Review.objects.filter(product=product, user=request.user)) > 0)
+    if request.user.is_authenticated:
+        user_has_rated = Rating.objects.filter(product=product, user=request.user).exists()
+        user_has_reviewed = Review.objects.filter(product=product, user=request.user).exists()
+    else:
+        user_has_rated = False
+        user_has_reviewed = False
     stars = range(1, 6)
     main_image = product.pictures.filter(main=True).first()
 
-    if len(reviews) == 0:
+    if not reviews.exists():
         reviews = None
     else:
         reviews = reviews[:3]
-    if len(ratings) == 0:
+        review_ratings = Rating.objects.filter(product=product, user=OuterRef('user'))
+        reviews = reviews.annotate(rating=Subquery(review_ratings.values('rating')[:1]))
+
+    if not ratings.exists():
         rating = None
     else:
         rating = int((sum(rating.rating for rating in ratings) / len(ratings)) + .5)
 
-    stop_words = set(["a", "and", "is", "it", "this", "the", "of", "in", "to", "with", "for", "on", "at", "by", "from", "an", "or", "as", "but", "not", "be", "are", "has", "have", "had", "that", "which", "who", "whom", "whose", "where", "when", "why", "how", "there", "here", "&"])
+    stop_words = set([
+        "a", "and", "is", "it", "this", "the", "of", "in", "to", "with", "for", "on", "at",
+        "by", "from", "an", "or", "as", "but", "not", "be", "are", "has", "have", "had",
+        "that", "which", "who", "whom", "whose", "where", "when", "why", "how", "there", "here", "&"
+    ])
 
     if product and request.user.is_authenticated:
         words = set(word for word in (product.name + " " + product.description + " " + product.category.name).lower().split() if word not in stop_words)
@@ -138,6 +150,7 @@ def product_detail(request):
         'has_reviewed': user_has_reviewed,
         'main_image': main_image.image.url,
     })
+
 
     
 @login_required(login_url='login')
