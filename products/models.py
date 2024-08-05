@@ -30,7 +30,7 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     tags = models.ManyToManyField(Tag)
     created_at = models.DateTimeField(auto_now_add=True)
-    
+    views = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -70,7 +70,6 @@ class Picture(models.Model):
                 pics[0].save()
 
     def delete(self, *args, **kwargs):
-        # Delete the file from S3
         s3 = boto3.client(
             's3',
             aws_access_key_id=settings.AWS_ACCESS_KEY_ID,

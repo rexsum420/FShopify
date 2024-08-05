@@ -95,6 +95,8 @@ def create_product(request, store_name):
 def product_detail(request):
     product_id = request.GET.get('product_id')
     product = get_object_or_404(Product, id=product_id)
+    product.views += 1
+    product.save()
     inventory = get_object_or_404(Inventory, product=product)
     reviews = Review.objects.filter(product=product).order_by('-created_at')
     ratings = Rating.objects.filter(product=product)
