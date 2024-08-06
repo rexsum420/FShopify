@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}Select Payment{% endblock title %}
+
+{% block content %}
+{% if cards|length > 0 %}
+<div class="credit-cards">
+    <div class='d-flex justify-content-between align-items-center'>
+        <h2>Select a Credit Card</h2>
+        <a href='{% url "add-credit-card" %}' class='btn btn-primary'>Add Card</a>
+    </div>
+    <div id="card-container">
+        {% for card in cards %}
+            <div class="card" data-card-id="{{ card.id }}" onclick="selectCard(this)">
+                <p>Card Holder: {{ card.card_holder }}</p>
+                <p>Card Number: {{ card.masked_card_number }}</p>
+                <p>Expires: {{ card.expiration_month_year }}</p>
+                <p>CVV: {{ card.cvv }}</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="billing-addresses" style="display: none;" id="billing-container">
+    <h2>Select a Billing Address</h2>
+    <div id="address-container">
+        {% for card in cards %}
+            {% if card.billingaddress %}
+                <div class="address" data-card-id="{{ card.id }}" data-address-id="{{ card.billingaddress.id }}" onclick="selectAddress(this)">
+                    <p>{{ card.billingaddress.address_line_1 }}</p>
+                    <p>{{ card.billingaddress.address_line_2 }}</p>
+                    <p>{{ card.billingaddress.city }}, {{ card.billingaddress.state }} {{ card.billingaddress.postal_code }}</p>
+                    <p>{{ card.billingaddress.country }}</p>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+<div id="checkout-button-container" style="display: none;">
+    <a href="{% url 'checkout' %}" class="btn btn-primary">Proceed to Checkout</a>
+</div>
+{% else %}
+<div class="d-flex justify-content-between align-items-center no-cards">
+    <h2>No Credit Cards Found</h2>
+    <a href='{% url "add-credit-card" %}' class='btn btn-primary'>Add Card</a>
+</div>
+
+{% endif %}
+{% endblock content %}
+
+{% block js %}
+<script>
+    let selectedCardId = null;
+    let selectedAddressId = null;
+
+    function selectCard(cardElement) {
+        // Deselect any previously selected card
+        document.querySelectorAll('.card').forEach(card => card.classList.remove('selected'));
+        cardElement.classList.add('selected');
+        selectedCardId = cardElement.dataset.cardId;
+
+        // Show the billing addresses for the selected card
+        document.getElementById('billing-container').style.display = 'block';
+        document.querySelectorAll('.address').forEach(address => {
+            if (address.dataset.cardId === selectedCardId) {
+                address.style.display = 'block';
+            } else {
+                address.style.display = 'none';
+            }
+        });
+
+        // Hide the checkout button until both card and address are selected
+        document.getElementById('checkout-button-container').style.display = 'none';
+        selectedAddressId = null;
+    }
+
+    function selectAddress(addressElement) {
+        // Deselect any previously selected address
+        document.querySelectorAll('.address').forEach(address => address.classList.remove('selected'));
+        addressElement.classList.add('selected');
+        selectedAddressId = addressElement.dataset.addressId;
+
+        // Show the checkout button
+        document.getElementById('checkout-button-container').style.display = 'block';
+    }
+</script>
+
+<style>
+    .card, .address {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin: 10px;
+        cursor: pointer;
+    }
+    .card.selected, .address.selected {
+        border-color: #007bff;
+        background-color: #e9ecef;
+    }
+</style>
+{% endblock js %}

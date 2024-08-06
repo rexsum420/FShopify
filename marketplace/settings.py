@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'analytics',
     'bulk_upload',
     'cart',
+    'creditcards',
     'coupons',
     'inventory',
     'orders',

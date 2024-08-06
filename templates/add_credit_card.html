@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Free Market Add Credit Card{% endblock title %}
+{% block content %}
+<h1>Add Credit Card</h1>
+<form method="post">
+    <table>
+    {% csrf_token %}
+    {{ card_form.as_table }}
+    {{ formset.as_table }}
+    </table>
+    <button class='btn btn-primary' type="submit">Save</button>
+</form>
+
+{% endblock content %}
