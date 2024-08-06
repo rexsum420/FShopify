@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Select Shipping{% endblock title %}
+
+{% block content %}
+{% if shippings|length > 0 %}
+<div class="shippings">
+    <div class='d-flex justify-content-between align-items-center'>
+        <h2>Select a Shipping Address</h2>
+        <a href='{% url "add-shipping" %}' class='btn btn-primary'>Add Address</a>
+    </div>
+    <div id="shipping-container">
+        {% for shipping in shippings %}
+        <div class='d-flex justify-content-between align-items-center'>
+            <div class="col-10 shipping-address" data-shipping-id="{{ shipping.id }}" onclick="selectShipping(this)">
+                {{ shipping.customer_name }}<br />
+                {{ shipping.address_line_1 }}<br />
+                {% if shipping.address_line_2 %}
+                {{ shipping.address_line_2 }}<br />
+                {% endif %}
+                {{ shipping.city }}, {{ shipping.state }} {{ shipping.postal_code }}<br />
+                {{ shipping.country }}<br />
+            </div>
+            <div class='col-2 checkmark shipping-checkmark'></div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div id="proceed-button-container" style="display: none;">
+    <a href="#" class="btn btn-primary" id="proceed-button">Proceed to Payment</a>
+</div>
+{% else %}
+<div class='d-flex justify-content-between align-items-center'>
+    <h2>Select a Shipping Address</h2>
+    <a href='{% url "add-shipping" %}' class='btn btn-primary'>Add Address</a>
+</div>
+<p><i>No Shipping Addresses Found</i></p>
+
+{% endif %}
+<style>
+    .shipping-address {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin: 10px;
+        cursor: pointer;
+        position: relative;
+    }
+    .shipping-address.selected {
+        border-color: #007bff;
+        background-color: #e9ecef;
+    }
+    .checkmark {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #ccc;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .checkmark.selected::after {
+        content: '✔';
+        font-size: 24px;
+        color: #000000;
+    }
+</style>
+{% endblock content %}
+
+{% block js %}
+<script>
+    let selectedShippingId = null;
+
+    function selectShipping(shippingElement) {
+        document.querySelectorAll('.shipping-address').forEach(shipping => shipping.classList.remove('selected'));
+        document.querySelectorAll('.shipping-checkmark').forEach(checkmark => checkmark.classList.remove('selected'));
+
+        shippingElement.classList.add('selected');
+        shippingElement.nextElementSibling.classList.add('selected');
+        selectedShippingId = shippingElement.dataset.shippingId;
+
+        // Show the proceed button with the selected shipping ID
+        const proceedButton = document.getElementById('proceed-button');
+        proceedButton.href = `{% url 'select-payment' %}?shipping=${selectedShippingId}`;
+        document.getElementById('proceed-button-container').style.display = 'block';
+    }
+</script>
+{% endblock js %}

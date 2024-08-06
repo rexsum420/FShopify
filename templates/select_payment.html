@@ -10,12 +10,15 @@
     </div>
     <div id="card-container">
         {% for card in cards %}
-            <div class="credit-card" data-card-id="{{ card.id }}" onclick="selectCard(this)">
+        <div class='d-flex justify-content-between align-items-center'>
+            <div class="credit-card col-10" data-card-id="{{ card.id }}" onclick="selectCard(this)">
                 {{ card.card_holder }}<br />
                 {{ card.masked_card_number }}<br />
                 Expires: {{ card.expiration_month_year }}<br />
                 CVV: {{ card.cvv }}
             </div>
+            <div class='checkmark card-checkmark col-2'></div>
+        </div>
         {% endfor %}
     </div>
 </div>
@@ -25,7 +28,8 @@
     <div id="address-container">
         {% for card in cards %}
             {% if card.billingaddress %}
-                <div class="address" data-card-id="{{ card.id }}" data-address-id="{{ card.billingaddress.id }}" onclick="selectAddress(this)">
+            <div class='d-flex justify-content-between align-items-center'>
+                <div class="address col-10" data-card-id="{{ card.id }}" data-address-id="{{ card.billingaddress.id }}" onclick="selectAddress(this)">
                     {{ card.billingaddress.address_line_1 }}<br />
                     {% if card.billingaddress.address_line_2 %}
                     {{ card.billingaddress.address_line_2 }}<br />
@@ -33,44 +37,66 @@
                     {{ card.billingaddress.city }}, {{ card.billingaddress.state }} {{ card.billingaddress.postal_code }}<br />
                     {{ card.billingaddress.country }}<br />
                 </div>
+                <div class='col-2 checkmark billing-checkmark'></div>
+            </div>
             {% endif %}
         {% endfor %}
     </div>
 </div>
 
+<input type='hidden' id='shipping_id' value="{{ shipping }}" />
+
 <div id="checkout-button-container" style="display: none;">
-    <a href="{% url 'checkout' %}" class="btn btn-primary">Proceed to Checkout</a>
+    <a href="#" class="btn btn-primary" id="checkout-button">Proceed to Checkout</a>
 </div>
 {% else %}
 <div class="d-flex justify-content-between align-items-center no-cards">
     <h2>No Credit Cards Found</h2>
     <a href='{% url "add-credit-card" %}' class='btn btn-primary'>Add Card</a>
 </div>
-
 {% endif %}
+
 <style>
     .credit-card, .address {
         border: 1px solid #ccc;
         padding: 10px;
         margin: 10px;
         cursor: pointer;
+        position: relative;
     }
     .credit-card.selected, .address.selected {
         border-color: #007bff;
         background-color: #e9ecef;
     }
+    .checkmark, .billing-checkmark {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #ccc;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .checkmark.selected::after, .billing-checkmark.selected::after {
+        content: '✔';
+        font-size: 24px;
+        color: #000000;
+    }
 </style>
-
 {% endblock content %}
 
 {% block js %}
 <script>
     let selectedCardId = null;
     let selectedAddressId = null;
+    const shippingId = document.getElementById('shipping_id').value;
 
     function selectCard(cardElement) {
         document.querySelectorAll('.credit-card').forEach(card => card.classList.remove('selected'));
+        document.querySelectorAll('.card-checkmark').forEach(checkmark => checkmark.classList.remove('selected'));
+
         cardElement.classList.add('selected');
+        cardElement.nextElementSibling.classList.add('selected');
         selectedCardId = cardElement.dataset.cardId;
 
         // Show the billing addresses for the selected card
@@ -89,14 +115,17 @@
     }
 
     function selectAddress(addressElement) {
-        // Deselect any previously selected address
         document.querySelectorAll('.address').forEach(address => address.classList.remove('selected'));
+        document.querySelectorAll('.billing-checkmark').forEach(checkmark => checkmark.classList.remove('selected'));
+
         addressElement.classList.add('selected');
+        addressElement.nextElementSibling.classList.add('selected');
         selectedAddressId = addressElement.dataset.addressId;
 
-        // Show the checkout button
+        // Show the checkout button with the selected shipping, card, and billing IDs
+        const checkoutButton = document.getElementById('checkout-button');
+        checkoutButton.href = `{% url 'checkout' %}?shipping=${shippingId}&card=${selectedCardId}&billing=${selectedAddressId}`;
         document.getElementById('checkout-button-container').style.display = 'block';
     }
 </script>
 {% endblock js %}
-

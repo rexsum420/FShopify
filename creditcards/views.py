@@ -26,5 +26,6 @@ def add_credit_card(request):
 
 @login_required(login_url='login')
 def select_payment(request):
+    shipping = request.GET.get('shipping')
     cards = CreditCard.objects.filter(user=request.user).prefetch_related('billingaddress')
-    return render(request, 'select_payment.html', {'cards': cards})
+    return render(request, 'select_payment.html', {'cards': cards, 'shipping': shipping})

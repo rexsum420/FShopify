@@ -9,6 +9,7 @@ def create_shipping(request):
         form = ShippingForm(request.POST)
         if form.is_valid():
             shipping = form.save(commit=False)
+            shipping.user = request.user
             shipping.save()
             return redirect('select-shipping')
     else:
