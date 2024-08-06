@@ -3,18 +3,18 @@
 
 {% block content %}
 {% if cards|length > 0 %}
-<div class="credit-cards">
+<div class="cards">
     <div class='d-flex justify-content-between align-items-center'>
         <h2>Select a Credit Card</h2>
         <a href='{% url "add-credit-card" %}' class='btn btn-primary'>Add Card</a>
     </div>
     <div id="card-container">
         {% for card in cards %}
-            <div class="card" data-card-id="{{ card.id }}" onclick="selectCard(this)">
-                <p>Card Holder: {{ card.card_holder }}</p>
-                <p>Card Number: {{ card.masked_card_number }}</p>
-                <p>Expires: {{ card.expiration_month_year }}</p>
-                <p>CVV: {{ card.cvv }}</p>
+            <div class="credit-card" data-card-id="{{ card.id }}" onclick="selectCard(this)">
+                {{ card.card_holder }}<br />
+                {{ card.masked_card_number }}<br />
+                Expires: {{ card.expiration_month_year }}<br />
+                CVV: {{ card.cvv }}
             </div>
         {% endfor %}
     </div>
@@ -26,10 +26,12 @@
         {% for card in cards %}
             {% if card.billingaddress %}
                 <div class="address" data-card-id="{{ card.id }}" data-address-id="{{ card.billingaddress.id }}" onclick="selectAddress(this)">
-                    <p>{{ card.billingaddress.address_line_1 }}</p>
-                    <p>{{ card.billingaddress.address_line_2 }}</p>
-                    <p>{{ card.billingaddress.city }}, {{ card.billingaddress.state }} {{ card.billingaddress.postal_code }}</p>
-                    <p>{{ card.billingaddress.country }}</p>
+                    {{ card.billingaddress.address_line_1 }}<br />
+                    {% if card.billingaddress.address_line_2 %}
+                    {{ card.billingaddress.address_line_2 }}<br />
+                    {% endif %}
+                    {{ card.billingaddress.city }}, {{ card.billingaddress.state }} {{ card.billingaddress.postal_code }}<br />
+                    {{ card.billingaddress.country }}<br />
                 </div>
             {% endif %}
         {% endfor %}
@@ -46,6 +48,19 @@
 </div>
 
 {% endif %}
+<style>
+    .credit-card, .address {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin: 10px;
+        cursor: pointer;
+    }
+    .credit-card.selected, .address.selected {
+        border-color: #007bff;
+        background-color: #e9ecef;
+    }
+</style>
+
 {% endblock content %}
 
 {% block js %}
@@ -54,8 +69,7 @@
     let selectedAddressId = null;
 
     function selectCard(cardElement) {
-        // Deselect any previously selected card
-        document.querySelectorAll('.card').forEach(card => card.classList.remove('selected'));
+        document.querySelectorAll('.credit-card').forEach(card => card.classList.remove('selected'));
         cardElement.classList.add('selected');
         selectedCardId = cardElement.dataset.cardId;
 
@@ -84,17 +98,5 @@
         document.getElementById('checkout-button-container').style.display = 'block';
     }
 </script>
-
-<style>
-    .card, .address {
-        border: 1px solid #ccc;
-        padding: 10px;
-        margin: 10px;
-        cursor: pointer;
-    }
-    .card.selected, .address.selected {
-        border-color: #007bff;
-        background-color: #e9ecef;
-    }
-</style>
 {% endblock js %}
+

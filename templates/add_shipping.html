@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}Add Shipping Address{% endblock title %}
+
+{% block content %}
+<h2>Add Shipping Address</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="hidden" name="order" value="{{ order }}">
+    <button type="submit" class="btn btn-primary">Save Shipping Address</button>
+</form>
+{% endblock content %}
