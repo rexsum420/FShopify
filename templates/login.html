@@ -9,5 +9,7 @@
     <input type="hidden" name="next" value="{{ next }}">
     <button style='margin-top:10px;' type="submit">Login</button>
 </form>
-<p>Don't have an account? <a href="{% url 'register' %}?next={{ next }}">Register here</a></p>
+<div>Don't have an account? <a href="{% url 'register' %}?next={{ next }}">Register here</a></div>
+<div>Reset Password <a href='{% url "reset-password" %}'>here</a></div>
+
 {% endblock content %}
