@@ -1,1 +1,72 @@
 {% extends "base.html" %}
+{% block title %}Free Market Checkout{% endblock title %}
+{% block content %}
+<h1>Checkout</h1>
+{% if cart|length > 0 %}
+<form action="{% url 'checkout' %}" method="post">
+    {% csrf_token %}
+    {% for item in cart %}
+    <div class='d-flex justify-content-between align-items-center'>
+        <div>
+        {{ item.quantity }} x {{ item.product.name }}
+        </div>
+        <div>
+        ${{ item.price }} = ${{ item.total_price|floatformat:2 }}
+        </div>
+    </div>    
+    {% endfor %}
+    <hr />
+    <div style='width: 100%;'>
+        <div style='text-align: right;' id='subtotal'>SubTotal: ${{ cart.get_subtotal_price }}</div>
+        <div style='text-align: right;' id='tax'>Tax: ${{ cart.get_tax_price }}</div>
+        <div style='text-align: right;' id='total'><b>Total: ${{ cart.get_total_price }}</b></div>
+    </div>
+    <div>
+        <h2>Shipping</h2>
+        <hr />
+        <table>
+            <tr>
+                <td class='col-4'>Customer name:</td><td class='col-8'>{{ shipping.customer_name }}</td>
+            </tr>
+            <tr>
+                <td class='col-4'>Address:</td><td class='col-8'>{{ shipping.address_line_1 }}</td>
+            </tr>
+            {% if shipping.address_line_2 %}
+            <tr>
+                <td class='col-4'></td><td class='col-8'>{{ shipping.address_line_2 }}</td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td class='col-4'>City:</td><td class='col-8'>{{ shipping.city }}</td>
+            </tr>
+            <tr>
+                <td class='col-4'>State:</td><td class='col-8'>{{ shipping.state }}</td>
+            </tr>
+            <tr>
+                <td class='col-4'>Zip:</td><td class='col-8'>{{ shipping.postal_code }}</td>
+            </tr>
+        </table>
+    </div>
+    <hr />
+    <h2>Payment</h2>
+    <hr />
+    <table>
+        <tr>
+            <td class='col-4'>Name on Card:</td><td class='col-8'>{{ creditcard.card_holder }}</td>
+        </tr>
+        <tr>
+            <td class='col-4'>Card Number:</td><td class='col-8'>{{ creditcard.masked_card_number }}</td>
+        </tr>
+        <tr>
+            <td class='col-4'>Expiration Date:</td><td class='col-8'>{{ creditcard.expiration_month_year }}</td>
+        </tr>
+    </table>
+    <hr />
+    <div>
+        <button type='submit' class='btn btn-primary'>Place Order</button>
+    </div>
+</form>
+{% else %}
+<p><i>No items selected to purchase</i></p>
+{% endif %}
+{% endblock content %}

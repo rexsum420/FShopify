@@ -2,7 +2,7 @@
 {% load custom_filters %}
 {% block title %}Free Market - Product Detail{% endblock title %}
 {% block content %}
-<div class="col-12 col-md-8 col-lg-6" style="border: 2px solid #dfe5e9; margin-bottom: 20px; margin-top: 12px; background: #fff; padding: 4px; box-shadow: 0 1px 4px 0 rgba(0,0,0,0.37); max-width: 350px; margin-left: auto; margin-right: auto; overflow: hidden;">
+<div style="border: 2px solid #dfe5e9; margin-bottom: 20px; margin-top: 12px; background: #fff; padding: 4px; box-shadow: 0 1px 4px 0 rgba(0,0,0,0.37); max-width: 350px; margin-left: auto; margin-right: auto; overflow: hidden;">
     <div style="display: flex; flex-wrap: wrap;">
         <div style="flex: 1 1 100%; max-width: 100%; padding: 16px;">
             <h5 style="margin: 0;">
@@ -101,7 +101,7 @@
     </div>
 </div>
 
-<div class="col-12 col-md-8 col-lg-6" style="border: 2px solid #dfe5e9; margin-bottom: 20px; margin-top: 12px; background: #fff; padding: 4px; box-shadow: 0 1px 4px 0 rgba(0,0,0,0.37); max-width: 350px; margin-left: auto; margin-right: auto; overflow: hidden;">
+<div style="border: 2px solid #dfe5e9; margin-bottom: 20px; margin-top: 12px; background: #fff; padding: 4px; box-shadow: 0 1px 4px 0 rgba(0,0,0,0.37); max-width: 350px; margin-left: auto; margin-right: auto; overflow: hidden;">
     <h4 style="padding: 10px;">Latest Reviews</h4>
     {% if reviews %}
     {% for review in reviews %}
@@ -128,7 +128,7 @@
 {% endif %}
 </div>
 
-<div class="col-12 col-md-8 col-lg-6" style="border: 2px solid #dfe5e9; margin-bottom: 20px; margin-top: 12px; background: #fff; padding: 4px; box-shadow: 0 1px 4px 0 rgba(0,0,0,0.37); max-width: 350px; margin-left: auto; margin-right: auto; overflow: hidden;">
+<div style="border: 2px solid #dfe5e9; margin-bottom: 20px; margin-top: 12px; background: #fff; padding: 4px; box-shadow: 0 1px 4px 0 rgba(0,0,0,0.37); max-width: 350px; margin-left: auto; margin-right: auto; overflow: hidden;">
     {% if user.is_authenticated %}
     {% if not has_reviewed %}
     <form action='{% url "create-review" %}' method='POST'>

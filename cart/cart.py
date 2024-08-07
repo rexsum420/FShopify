@@ -31,6 +31,7 @@ class Cart:
             del self.cart[product_id]
             self.save()
 
+
     def __iter__(self):
         product_ids = self.cart.keys()
         products = Product.objects.filter(id__in=product_ids)
@@ -40,7 +41,7 @@ class Cart:
             cart[str(product.id)]['product'] = product
 
         for item in cart.values():
-            item['total_price'] = float(item['price']) * item['quantity']
+            item['total_price'] = round(float(item['price']) * item['quantity'], 2)
             yield item
 
     def __len__(self):
@@ -48,6 +49,8 @@ class Cart:
 
     def get_subtotal_price(self):
         subtotal = sum(float(item['price']) * item['quantity'] for item in self.cart.values())
+        subtotal = int(subtotal * 100)
+        subtotal = float(subtotal / 100)
         return f"{subtotal:.2f}"
 
     def get_tax_price(self):

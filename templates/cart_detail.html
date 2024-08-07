@@ -2,18 +2,20 @@
 {% load static %}
 {% block title %}Free Market View Cart{% endblock title %}
 {% block content %}
-<center>
-<img src="{% static 'freemarket.png' %}" style="width:60%; height:auto; margin-right:auto; margin-left:auto;" />
-</center>
+<div style="position: relative;">
+    <center>
+        <img src="{% static 'freemarket.png' %}" style="width:60%; height:auto; margin-right:auto; margin-left:auto;" />
+    </center>
+</div>
 <hr />
 <h1>Shopping Cart</h1>
 <table style='border-width:1px; border-style: solid; border-color: #000000;'>
     <thead class="table-header-md">
         <tr>
-            <th width='30%'>Product</th>
+            <th width='28%'>Product</th>
             <th width='10%'>Price</th>
-            <th width='10%'>Qty.</th>
-            <th width='10%'>Total</th>
+            <th width='12%'>Qty.</th>
+            <th width='1%'>Total</th>
             <th width='10%'>Actions</th>
         </tr>
     </thead>
@@ -35,6 +37,7 @@
                 <form action="{% url 'decrease_quantity' item.product.id %}" method="post" style="display:inline;">
                     {% csrf_token %}
                     <input type="hidden" name="quantity" value="1">
+                    <input type="hidden" name="prev_page" value="{{ prev_page }}">
                     <button type="submit" class="btn btn-link p-0 m-0 align-baseline">
                         <i style='color:#C00000' class="fas fa-minus"></i>
                     </button>
@@ -43,19 +46,21 @@
                 <form action="{% url 'increase_quantity' item.product.id %}" method="post" style="display:inline;">
                     {% csrf_token %}
                     <input type="hidden" name="quantity" value="1">
+                    <input type="hidden" name="prev_page" value="{{ prev_page }}">
                     <button type="submit" class="btn btn-link p-0 m-0 align-baseline">
                         <i style='color:#00C000' class="fas fa-plus"></i>
                     </button>
                 </form>
             </td>
-            <td>${{ item.total_price }}</td>
-            <td style='text-align:center' >
+            <td>${{ item.total_price|floatformat:2 }}</td>
+            <td style='text-align:center'>
                 <form action="{% url 'cart_remove' item.product.id %}" method="post">
                     {% csrf_token %}
+                    <input type="hidden" name="prev_page" value="{{ prev_page }}">
                     <button type="submit" class="btn btn-link p-0 m-0 align-baseline">
                         <i style='color:#C00000' class="fas fa-trash"></i>
                     </button>
-                </form>                
+                </form>
             </td>
         </tr>
         {% empty %}
@@ -68,5 +73,7 @@
 <p style='text-align:right'>Sub-Total: ${{ cart.get_subtotal_price }}<br />
 Tax: ${{ cart.get_tax_price }}<br />
 <b>Total: ${{ cart.get_total_price }}</b></p>
+{% if cart|length > 0 %}
 <a class="btn btn-primary" href="{% url 'select-shipping' %}">Select Shipping</a>
+{% endif %}
 {% endblock %}

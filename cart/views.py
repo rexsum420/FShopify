@@ -36,4 +36,5 @@ def increase_quantity(request, product_id):
 
 def cart_detail(request):
     cart = Cart(request)
-    return render(request, 'cart_detail.html', {'cart': cart, 'authenticated': request.user.is_authenticated})
+    prev_page = request.META.get('HTTP_REFERER', '/')
+    return render(request, 'cart_detail.html', {'cart': cart, 'authenticated': request.user.is_authenticated, 'prev_page': prev_page})
