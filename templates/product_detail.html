@@ -24,32 +24,34 @@
                 </div>
             {% endfor %}
         </div>
+        {% if product.color or product.size %}
+        <div style="flex: 1 1 100%; max-width: 100%; padding: 16px;">
+            {% if product.color %}
+            <span>Color:    {{ product.color }}</span>
+            {% endif %}
+            {% if product.size %}
+            <span>Size:    {{ product.size }}</span>
+            {% endif %}
+        </div>
+        {% endif %}
         <div style="flex: 1 1 100%; max-width: 100%; padding: 16px;">
             <div style="border-bottom: 1px solid #dfe5e9; padding-bottom: 17px;">
-                {% if product.sale_price and product.sale_price > 0 %}
-                <div style="display: flex; align-items: center;">
-                    <div style="font-size: 24px; margin: 0; font-weight: 300; color: #808080;">
-                        <span><s>${{ product.price }}</s></span>
-                    </div>
-                    <div style="font-size: 24px; margin: 0; font-weight: 300; color: #00C000; margin-left: 10px;">
-                        <span><b>${{ product.sale_price }}</b></span>
-                    </div>
-                </div>
-                {% else %}
-                <p style="font-size: 24px; margin: 0; font-weight: 300; color: #21c2f8;">
-                    <span><b>${{ product.price }}</b></span>
-                </p>
-                {% endif %}
-            </div>
-            <div style="padding: 11px 0;">
-                <div style="display: flex; justify-content: space-between;">
-                    <form action="{% url 'cart_add' product.id %}" method="post">
-                        {% csrf_token %}
-                        <div style="display: flex; justify-content: space-between;">
-                            <input type="number" name="quantity" value="1" class="form-control" style="display: inline-block; width: 60px;">
-                            <input type="submit" value="Add to cart" class="btn btn-primary" style="margin-left: 10px;">
-                        </div>
-                    </form>
+                <div style="flex: 1 1 100%; max-width: 100%; padding: 16px;">
+                    {% if product.color %}
+                    <p>Color: {{ product.color }}</p>
+                    {% endif %}
+                    {% if product.size %}
+                    <p>Size: {{ product.size }}</p>
+                    {% endif %}
+                    {% if product.brand %}
+                    <p>Brand: {{ product.brand }}</p>
+                    {% endif %}
+                    {% if product.model_number %}
+                    <p>Model Number: {{ product.model_number }}</p>
+                    {% endif %}
+                    {% if product.weight %}
+                    <p>Weight: {{ product.weight }} lbs</p>
+                    {% endif %}
                 </div>
                 <center>
                     {% if rating %}
@@ -69,24 +71,35 @@
                     {% endif %}
                 </center>
             </div>
-            <!-- Rating Form -->
+            <div style="padding: 11px 0;">
+                <div style="display: flex; justify-content: space-between;">
+                    <form action="{% url 'cart_add' product.id %}" method="post">
+                        {% csrf_token %}
+                        <div style="display: flex; justify-content: space-between;">
+                            <input type="number" name="quantity" value="1" class="form-control" style="display: inline-block; width: 60px;">
+                            <input type="submit" value="Add to cart" class="btn btn-primary" style="margin-left: 10px;">
+                        </div>
+                    </form>
+                </div>
+
+            </div>
             {% if user.is_authenticated %}
             {% if not has_rated %}
             <div style="padding: 20px 0;">
-                <form action="{% url 'create-rating' %}" method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="product_id" value="{{ product.id }}">
-                    <div style="display: flex; justify-content: center;">
-                        {% for i in stars %}
-                            <label style="margin-right: 2px;">
-                                <a href="{% url 'create-rating' %}?rating={{i}}&product_id={{product.id}}">
-                                <i class="fa fa-star"></i>
-                                </a>
-                            </label>
-                        {% endfor %}
-                    </div>
-                </form>
-            </div>
+                <div style="display: flex; justify-content: center;">
+                    {% for i in stars %}
+                        <input type="radio" id="star{{i}}" name="rating" value="{{i}}" style="display: none;">
+                        <label for="star{{i}}" 
+                            class="star" 
+                            style="margin-right: 2px; font-size: 24px; color: #0d6efd;"
+                            onmouseover="highlightStars({{i}})"
+                            onmouseout="resetStars()"
+                            onclick="submitRating({{i}})">
+                            <i class="fa fa-star"></i>
+                        </label>
+                    {% endfor %}
+                </div>
+            </div> 
             {% else %}
             <div style="padding: 20px 0;">
                 <i>You have already rated this product.</i>
@@ -99,6 +112,29 @@
             {% endif %}
         </div>
     </div>
+</div>
+
+<div style="border: 2px solid #dfe5e9; margin-bottom: 20px; margin-top: 12px; background: #fff; padding: 4px; box-shadow: 0 1px 4px 0 rgba(0,0,0,0.37); max-width: 350px; margin-left: auto; margin-right: auto; overflow: hidden;">
+    {% if user.is_authenticated %}
+    {% if not has_reviewed %}
+    <form action='{% url "create-review" %}' method='POST'>
+        {% csrf_token %}
+        <input type="hidden" name="product" value="{{ product.id }}">
+        <textarea style='rows:1; width:100%' name="comment" placeholder="Write your review here..."></textarea><br/>
+        <div class='d-flex justify-content-end'>
+        <button type='submit' class='btn btn-primary'>Post</button>
+        </div>
+    </form>
+    {% else %}
+    <div style="padding: 20px 0;">
+        <i>You have already reviewed this product.</i>
+    </div>
+    {% endif %}
+    {% else %}
+    <div style="padding: 20px 0;">
+        <i>Please login to review this product.</i>
+    </div>
+    {% endif %}
 </div>
 
 <div style="border: 2px solid #dfe5e9; margin-bottom: 20px; margin-top: 12px; background: #fff; padding: 4px; box-shadow: 0 1px 4px 0 rgba(0,0,0,0.37); max-width: 350px; margin-left: auto; margin-right: auto; overflow: hidden;">
@@ -127,27 +163,44 @@
     <p style="padding: 10px;">No reviews yet.</p>
 {% endif %}
 </div>
-
-<div style="border: 2px solid #dfe5e9; margin-bottom: 20px; margin-top: 12px; background: #fff; padding: 4px; box-shadow: 0 1px 4px 0 rgba(0,0,0,0.37); max-width: 350px; margin-left: auto; margin-right: auto; overflow: hidden;">
-    {% if user.is_authenticated %}
-    {% if not has_reviewed %}
-    <form action='{% url "create-review" %}' method='POST'>
-        {% csrf_token %}
-        <input type="hidden" name="product" value="{{ product.id }}">
-        <textarea style='rows:1; width:100%' name="comment" placeholder="Write your review here..."></textarea><br/>
-        <div class='d-flex justify-content-end'>
-        <button type='submit' class='btn btn-primary'>Submit</button>
-        </div>
-    </form>
-    {% else %}
-    <div style="padding: 20px 0;">
-        <i>You have already reviewed this product.</i>
-    </div>
-    {% endif %}
-    {% else %}
-    <div style="padding: 20px 0;">
-        <i>Please login to review this product.</i>
-    </div>
-    {% endif %}
-</div>
 {% endblock content %}
+{% block js %}
+<script>
+    function highlightStars(rating) {
+        // Highlight all stars up to the one being hovered over
+        for (let i = 1; i <= rating; i++) {
+            document.getElementById('star' + i).nextElementSibling.style.color = 'gold';
+        }
+        // Ensure stars after the hovered star are blue
+        for (let i = rating + 1; i <= 5; i++) {
+            document.getElementById('star' + i).nextElementSibling.style.color = '#0d6efd';
+        }
+    }
+
+    function resetStars() {
+        // Reset all stars to blue when not hovering
+        for (let i = 1; i <= 5; i++) {
+            document.getElementById('star' + i).nextElementSibling.style.color = '#0d6efd';
+        }
+    }
+
+    function submitRating(rating) {
+        // Redirect the user to the URL with the rating and product ID as query parameters
+        const productId = {{ product.id }};
+        window.location.href = "{% url 'create-rating' %}?rating=" + rating + "&product_id=" + productId;
+    }
+</script>
+
+{% endblock js %}
+{% block head %}
+<style>
+    .star i {
+        cursor: pointer;
+        transition: color 0.2s ease-in-out;
+    }
+    
+    .star i:hover {
+        color: gold;
+    }
+</style>
+{%endblock head %}

@@ -3,16 +3,16 @@ from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import CustomUserCreationForm
 from rest_framework import viewsets, permissions
-from .models import User, Token
+from django.contrib.auth import get_user_model
 from .serializers import UserSerializer
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, update_session_auth_hash
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.urls import reverse
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.tokens import default_token_generator
+
+User = get_user_model()
 
 def reset_password_link(request):
     if request.method == 'POST':
@@ -21,7 +21,7 @@ def reset_password_link(request):
             user = User.objects.get(email=email)
         except User.DoesNotExist:
             messages.error(request, 'No user found with that email address.')
-            return redirect('forgot-password')
+            return redirect('reset-password-link')
 
         token = default_token_generator.make_token(user)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
@@ -30,7 +30,7 @@ def reset_password_link(request):
         send_mail(
             'Password Reset Request',
             f'Please click the link below to reset your password:\n{reset_link}',
-            'rexsum420@gmail.com',
+            None,
             [email],
             fail_silently=False,
         )
@@ -103,7 +103,7 @@ def reset_password(request, uidb64=None, token=None):
             user = User.objects.get(pk=uid)
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             messages.error(request, 'Invalid password reset link.')
-            return redirect('forgot-password')
+            return redirect('home')
 
         if user is not None and default_token_generator.check_token(user, token):
             user.set_password(new_password)
@@ -112,7 +112,7 @@ def reset_password(request, uidb64=None, token=None):
             return redirect('login')
         else:
             messages.error(request, 'Invalid password reset link.')
-            return redirect('forgot-password')
+            return redirect('home')
 
     if uidb64 and token:
         try:
@@ -125,4 +125,4 @@ def reset_password(request, uidb64=None, token=None):
             return render(request, 'reset_password.html', {'authenticated': request.user.is_authenticated})
 
     messages.error(request, 'Invalid password reset link.')
-    return redirect('forgot-password')
+    return redirect('home')

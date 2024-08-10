@@ -4,6 +4,7 @@ import uuid
 from django.utils.deconstruct import deconstructible
 from django.conf import settings
 import boto3
+from ckeditor.fields import RichTextField
 
 class Category(models.Model):
     name = models.CharField(max_length=255)
@@ -22,15 +23,21 @@ class Tag(models.Model):
         return self.name
     
 class Product(models.Model):
+    
     name = models.CharField(max_length=255)
     store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name='product')
-    description = models.TextField()
+    description = RichTextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     sale_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     tags = models.ManyToManyField(Tag)
     created_at = models.DateTimeField(auto_now_add=True)
     views = models.IntegerField(default=0)
+    size = models.CharField(max_length=32, blank=True, null=True)
+    color = models.CharField(max_length=32, blank=True, null=True)
+    brand = models.CharField(max_length=128, blank=True, null=True)
+    model_number = models.CharField(max_length=50, blank=True, null=True)
+    weight = models.DecimalField(max_digits=8, decimal_places=1, default=0.0)
 
     def __str__(self):
         return self.name
@@ -78,5 +85,4 @@ class Picture(models.Model):
         )
         s3.delete_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=self.image.name)
         
-        # Call the parent class delete method
         super().delete(*args, **kwargs)

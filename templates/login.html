@@ -10,6 +10,6 @@
     <button style='margin-top:10px;' type="submit">Login</button>
 </form>
 <div>Don't have an account? <a href="{% url 'register' %}?next={{ next }}">Register here</a></div>
-<div>Reset Password <a href='{% url "reset-password" %}'>here</a></div>
+<div>Reset Password <a href='{% url "reset-password-link" %}'>here</a></div>
 
 {% endblock content %}

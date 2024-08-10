@@ -3,6 +3,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
+from django.shortcuts import get_object_or_404
 
 class User(AbstractUser):
     ROLE_CHOICES = [
@@ -22,7 +23,7 @@ class User(AbstractUser):
             self.username = self.username.lower().replace(" ", "")
         super().save(*args, **kwargs)
         if self.role:
-            group, created = Group.objects.get_or_create(name=self.role)
+            group = get_object_or_404(Group, name=self.role)
             self.groups.set([group])
 
 @receiver(post_save, sender=User)
