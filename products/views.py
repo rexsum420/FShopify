@@ -28,8 +28,6 @@ class ProductViewSet(viewsets.ModelViewSet):
         
 @login_required(login_url='login')
 def create_product(request, store_name):
-    if not request.user.is_authenticated:
-        return redirect('/users/login/')
     
     store = get_object_or_404(Store, name=store_name, owner=request.user)
 

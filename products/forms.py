@@ -1,6 +1,5 @@
 from django import forms
 from .models import Product, Picture
-from ckeditor.widgets import CKEditorWidget
 
 class ProductForm(forms.ModelForm):
     quantity = forms.IntegerField(label='Stock Quantity', widget=forms.NumberInput(attrs={'class': 'form-control'}))
@@ -15,7 +14,7 @@ class ProductForm(forms.ModelForm):
         ]
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'description': CKEditorWidget(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control'}),
             'price': forms.NumberInput(attrs={'class': 'form-control'}),
             'category': forms.Select(attrs={'class': 'form-control'}),
             'size': forms.TextInput(attrs={'class': 'form-control'}),

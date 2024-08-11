@@ -12,6 +12,9 @@ from django.http import HttpResponseForbidden
 from django.db.models import OuterRef, Subquery, Value, CharField
 from django.db.models.functions import Coalesce, Concat
 from coupons.models import Coupon, ProductCoupon, UsedCoupon
+from datetime import timedelta
+from django.utils import timezone
+
 
 @login_required(login_url='login')
 def create_store(request):
@@ -31,8 +34,6 @@ def my_stores(request):
     stores = Store.objects.filter(owner=request.user)
     return render(request, 'stores.html', {'stores': stores, 'authenticated': request.user.is_authenticated})
 
-from datetime import timedelta
-from django.utils import timezone
 
 @login_required(login_url='login')
 def edit_store(request, store_name):

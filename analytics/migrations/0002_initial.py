@@ -9,14 +9,14 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('inventory', '0001_initial'),
+        ('analytics', '0001_initial'),
         ('products', '0001_initial'),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='inventory',
-            name='product',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='products.product'),
+            model_name='analytic',
+            name='tag',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='products.tag'),
         ),
     ]

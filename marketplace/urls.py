@@ -28,5 +28,4 @@ urlpatterns = [
     path('credit-cards/', include('creditcards.urls')),
     path('shipping/', include('shipping.urls')),
     path('', views.index, name='home'),
-    path('ckeditor/', include('ckeditor_uploader.urls')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]

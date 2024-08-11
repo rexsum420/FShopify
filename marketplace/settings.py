@@ -41,13 +41,13 @@ INSTALLED_APPS = [
     'analytics',
     'bulk_upload',
     'cart',
-    'ckeditor',
-    'ckeditor_uploader',
     'creditcards',
     'coupons',
     'inventory',
+    'markdownx',
     'orders',
     'products',
+    'django_quill',
     'reviews',
     'search',
     'seo',
@@ -161,31 +161,6 @@ AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME')
 AWS_S3_CUSTOM_DOMAIN = os.environ.get('AWS_S3_CUSTOM_DOMAIN')
 
 CART_SESSION_ID = 'cart'
-
-CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
-CKEDITOR_UPLOAD_PATH = "uploads/"
-
-CKEDITOR_CONFIGS = {
-    'default': {
-        'toolbar': 'Full',
-        'toolbar_Full': [
-            {'name': 'clipboard', 'items': ['Undo', 'Redo']},
-            {'name': 'editing', 'items': ['Find', 'Replace', 'SelectAll']},
-            {'name': 'forms', 'items': ['Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Button', 'ImageButton', 'HiddenField']},
-            {'name': 'basicstyles', 'items': ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', 'RemoveFormat']},
-            {'name': 'paragraph', 'items': ['NumberedList', 'BulletedList', 'Outdent', 'Indent', 'Blockquote', 'CreateDiv', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', 'BidiLtr', 'BidiRtl', 'Language']},
-            {'name': 'links', 'items': ['Link', 'Unlink', 'Anchor']},
-            {'name': 'insert', 'items': ['Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe']},
-            {'name': 'styles', 'items': ['Styles', 'Format', 'Font', 'FontSize']},
-            {'name': 'colors', 'items': ['TextColor', 'BGColor']},
-        ],
-        'height': 300,
-        'width': '100%',
-        'toolbarCanCollapse': True,
-        'removePlugins': 'stylesheetparser',
-        'extraAllowedContent': 'div(*){*};'
-    }
-}
 
 # LOGGING = {
 #     'version': 1,

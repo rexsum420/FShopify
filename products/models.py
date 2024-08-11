@@ -4,7 +4,8 @@ import uuid
 from django.utils.deconstruct import deconstructible
 from django.conf import settings
 import boto3
-from ckeditor.fields import RichTextField
+from django_quill.fields import QuillField
+from markdownx.models import MarkdownxField
 
 class Category(models.Model):
     name = models.CharField(max_length=255)
@@ -26,10 +27,10 @@ class Product(models.Model):
     
     name = models.CharField(max_length=255)
     store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name='product')
-    description = RichTextField()
+    description = MarkdownxField(blank=True, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     sale_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, blank=True, null=True)
     tags = models.ManyToManyField(Tag)
     created_at = models.DateTimeField(auto_now_add=True)
     views = models.IntegerField(default=0)
