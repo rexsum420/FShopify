@@ -3,10 +3,8 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-class ShippingMethod(models.Model):
-    name = models.CharField(max_length=255)
-    carrier = models.CharField(max_length=255)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+class Tracking(models.Model):
+    tracking_number = models.CharField(max_length=32)
 
 class ShippingAddress(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
